@@ -107,6 +107,17 @@ export async function signUpAction(
   }
 
   const supabase = await createClient();
+
+  const { data: isAvailable } = await supabase.rpc("is_username_available", {
+    check_username: displayName,
+  });
+  if (isAvailable === false) {
+    return {
+      status: "error",
+      message: "That username is already taken — please choose another.",
+    };
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,

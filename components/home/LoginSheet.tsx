@@ -13,6 +13,7 @@ import {
   type LoginLinkFormState,
 } from "@/app/actions/auth";
 import { Field, StatusText, SubmitButton } from "@/components/auth/AuthFormControls";
+import TermsContent from "@/components/auth/TermsContent";
 import { CloseIcon } from "./HomeIcons";
 
 type Mode =
@@ -22,7 +23,8 @@ type Mode =
   | "signup"
   | "signup-sent"
   | "forgot"
-  | "forgot-sent";
+  | "forgot-sent"
+  | "terms";
 
 const initialAuthFormState: AuthFormState = { status: "idle", message: null };
 const initialLoginLinkState: LoginLinkFormState = { status: "idle", message: null };
@@ -35,6 +37,7 @@ const TITLES: Record<Mode, string> = {
   "signup-sent": "Check Your Email",
   forgot: "Forgot Password",
   "forgot-sent": "Check Your Email",
+  terms: "Terms of Use & Privacy Policy",
 };
 
 /**
@@ -54,6 +57,7 @@ export default function LoginSheet({
 }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("login");
+  const [returnMode, setReturnMode] = useState<"login" | "signup">("login");
   const [lastEmail, setLastEmail] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
@@ -157,6 +161,10 @@ export default function LoginSheet({
                 setTermsAccepted={setTermsAccepted}
                 marketingConsent={marketingConsent}
                 setMarketingConsent={setMarketingConsent}
+                onOpenTerms={() => {
+                  setReturnMode("login");
+                  setMode("terms");
+                }}
               />
               {(loginLinkState.status === "error" ||
                 loginLinkState.status === "phone-unavailable") && (
@@ -166,6 +174,15 @@ export default function LoginSheet({
                 Continue
               </SubmitButton>
             </form>
+            <div className="px-gutter pt-3 text-center">
+              <button
+                type="button"
+                onClick={() => setMode("forgot")}
+                className="text-sm font-semibold text-forest"
+              >
+                Forgot password?
+              </button>
+            </div>
             <FooterSwitch
               prompt="New to Beamori?"
               actionLabel="Sign up"
@@ -286,6 +303,10 @@ export default function LoginSheet({
                 setTermsAccepted={setTermsAccepted}
                 marketingConsent={marketingConsent}
                 setMarketingConsent={setMarketingConsent}
+                onOpenTerms={() => {
+                  setReturnMode("signup");
+                  setMode("terms");
+                }}
               />
               {signUpState.status === "error" && (
                 <StatusText tone="error">{signUpState.message}</StatusText>
@@ -344,6 +365,13 @@ export default function LoginSheet({
             <BackLink onClick={() => setMode("login")} label="Back to login" />
           </PendingScreen>
         )}
+
+        {mode === "terms" && (
+          <div className="px-gutter flex flex-col gap-4 pt-6 pb-10">
+            <TermsContent />
+            <BackLink onClick={() => setMode(returnMode)} label="Back" />
+          </div>
+        )}
       </div>
     </>,
     document.body,
@@ -355,11 +383,13 @@ function Consent({
   setTermsAccepted,
   marketingConsent,
   setMarketingConsent,
+  onOpenTerms,
 }: {
   termsAccepted: boolean;
   setTermsAccepted: (value: boolean) => void;
   marketingConsent: boolean;
   setMarketingConsent: (value: boolean) => void;
+  onOpenTerms: () => void;
 }) {
   return (
     <div className="flex flex-col gap-3">
@@ -372,15 +402,29 @@ function Consent({
         />
         I consent to receiving Beamori&apos;s updates and promotions.
       </label>
-      <label className="flex items-start gap-2 text-xs text-muted">
+      <div className="flex items-start gap-2 text-xs text-muted">
         <input
           type="checkbox"
+          id="terms-checkbox"
           checked={termsAccepted}
           onChange={(e) => setTermsAccepted(e.target.checked)}
           className="mt-0.5 h-4 w-4 accent-forest"
         />
-        I have read and accept Beamori&apos;s Terms of Use and Privacy Policy.
-      </label>
+        <label htmlFor="terms-checkbox">
+          I have read and accept Beamori&apos;s{" "}
+          <button
+            type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              onOpenTerms();
+            }}
+            className="font-semibold text-forest underline"
+          >
+            Terms of Use and Privacy Policy
+          </button>
+          .
+        </label>
+      </div>
     </div>
   );
 }

@@ -16,6 +16,9 @@ export function translateAuthError(message: string): string {
   if (lower.includes("already registered")) {
     return "An account with that email already exists — try logging in instead.";
   }
+  if (lower.includes("profiles_display_name_lower_key")) {
+    return "That username is already taken — please choose another.";
+  }
   if (
     lower.includes("user not found") ||
     lower.includes("unable to validate email") ||
