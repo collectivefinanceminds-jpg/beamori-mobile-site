@@ -10,11 +10,7 @@ export default function SignUpTrigger() {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   return (
-    <div className="px-gutter grid grid-cols-2 items-center">
-      <span className="text-base font-medium text-ink">
-        Miss me? <span aria-hidden="true">💚</span>
-      </span>
-
+    <>
       <button
         type="button"
         onClick={() => setSheetOpen(true)}
@@ -26,6 +22,6 @@ export default function SignUpTrigger() {
       </button>
 
       <LoginSheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
-    </div>
+    </>
   );
 }

@@ -1,22 +1,45 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import type { ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
+  requestLoginLinkAction,
+  requestPasswordResetAction,
   signInAction,
   signUpAction,
   type AuthFormState,
+  type LoginLinkFormState,
 } from "@/app/actions/auth";
+import { Field, StatusText, SubmitButton } from "@/components/auth/AuthFormControls";
 import { CloseIcon } from "./HomeIcons";
 
-type Mode = "login" | "signup";
+type Mode =
+  | "login"
+  | "login-sent"
+  | "login-password"
+  | "signup"
+  | "signup-sent"
+  | "forgot"
+  | "forgot-sent";
 
 const initialAuthFormState: AuthFormState = { status: "idle", message: null };
+const initialLoginLinkState: LoginLinkFormState = { status: "idle", message: null };
+
+const TITLES: Record<Mode, string> = {
+  login: "Log In",
+  "login-sent": "Check Your Email",
+  "login-password": "Log In With Password",
+  signup: "Sign Up",
+  "signup-sent": "Check Your Email",
+  forgot: "Forgot Password",
+  "forgot-sent": "Check Your Email",
+};
 
 /**
- * Bottom sheet covering ~85% of the viewport. Rendered via a portal directly
- * into document.body — this component lives inside the card with
+ * Bottom sheet covering up to ~85% of the viewport. Rendered via a portal
+ * directly into document.body — this component lives inside the card with
  * DiagonalOverlapCard's clip-path applied to it, and a clip-path ancestor
  * traps position:fixed descendants inside its own clipped bounds instead of
  * the viewport. Portalling out is what makes the sheet actually cover the
@@ -31,6 +54,14 @@ export default function LoginSheet({
 }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("login");
+  const [lastEmail, setLastEmail] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
+
+  const [loginLinkState, loginLinkFormAction, loginLinkPending] = useActionState(
+    requestLoginLinkAction,
+    initialLoginLinkState,
+  );
   const [signInState, signInFormAction, signInPending] = useActionState(
     signInAction,
     initialAuthFormState,
@@ -39,15 +70,33 @@ export default function LoginSheet({
     signUpAction,
     initialAuthFormState,
   );
-
-  const activeState = mode === "login" ? signInState : signUpState;
+  const [resetState, resetFormAction, resetPending] = useActionState(
+    requestPasswordResetAction,
+    initialAuthFormState,
+  );
 
   useEffect(() => {
-    if (activeState.status === "success") {
+    if (loginLinkState.status === "sent") setMode("login-sent");
+  }, [loginLinkState.status]);
+
+  useEffect(() => {
+    if (signInState.status === "success") {
       router.refresh();
       onClose();
     }
-  }, [activeState.status, router, onClose]);
+  }, [signInState.status, router, onClose]);
+
+  useEffect(() => {
+    if (signUpState.status === "check-email") setMode("signup-sent");
+    if (signUpState.status === "success") {
+      router.refresh();
+      onClose();
+    }
+  }, [signUpState.status, router, onClose]);
+
+  useEffect(() => {
+    if (resetState.status === "check-email") setMode("forgot-sent");
+  }, [resetState.status]);
 
   useEffect(() => {
     if (!open) return;
@@ -60,6 +109,10 @@ export default function LoginSheet({
 
   if (!open) return null;
 
+  const trackEmail = (event: ChangeEvent<HTMLInputElement>) => {
+    setLastEmail(event.target.value);
+  };
+
   return createPortal(
     <>
       <div
@@ -70,13 +123,11 @@ export default function LoginSheet({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={mode === "login" ? "Log in" : "Sign up"}
+        aria-label={TITLES[mode]}
         className="animate-sheet-in pb-safe fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[85dvh] w-full max-w-[430px] flex-col overflow-y-auto rounded-t-card bg-surface"
       >
         <div className="px-gutter flex items-center justify-between pt-5">
-          <h2 className="text-lg font-semibold text-ink">
-            {mode === "login" ? "Log In" : "Sign Up"}
-          </h2>
+          <h2 className="text-lg font-semibold text-ink">{TITLES[mode]}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -87,157 +138,294 @@ export default function LoginSheet({
           </button>
         </div>
 
-        {mode === "login" ? (
-          <form
-            action={signInFormAction}
-            className="px-gutter flex flex-col gap-4 pt-6 pb-6"
-          >
-            <Field label="Email" name="email" type="email" autoComplete="email" required />
-            <Field
-              label="Password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
+        {mode === "login" && (
+          <>
+            <form
+              action={loginLinkFormAction}
+              className="px-gutter flex flex-col gap-4 pt-6"
+            >
+              <Field
+                label="Email or Phone Number"
+                name="identifier"
+                type="text"
+                autoComplete="username"
+                required
+                onChange={trackEmail}
+              />
+              <Consent
+                termsAccepted={termsAccepted}
+                setTermsAccepted={setTermsAccepted}
+                marketingConsent={marketingConsent}
+                setMarketingConsent={setMarketingConsent}
+              />
+              {(loginLinkState.status === "error" ||
+                loginLinkState.status === "phone-unavailable") && (
+                <StatusText tone="error">{loginLinkState.message}</StatusText>
+              )}
+              <SubmitButton pending={loginLinkPending} disabled={!termsAccepted}>
+                Continue
+              </SubmitButton>
+            </form>
+            <FooterSwitch
+              prompt="New to Beamori?"
+              actionLabel="Sign up"
+              onClick={() => setMode("signup")}
             />
-            {signInState.status === "error" && (
-              <StatusText tone="error">{signInState.message}</StatusText>
-            )}
-            <SubmitButton pending={signInPending}>Log In</SubmitButton>
-          </form>
-        ) : (
-          <form
-            action={signUpFormAction}
-            className="px-gutter flex flex-col gap-4 pt-6 pb-6"
-          >
-            <Field
-              label="Display Name"
-              name="displayName"
-              type="text"
-              autoComplete="name"
-              required
-            />
-            <Field label="Email" name="email" type="email" autoComplete="email" required />
-            <Field
-              label="Mobile Number"
-              name="phone"
-              type="tel"
-              autoComplete="tel"
-            />
-            <Field
-              label="Password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              required
-            />
-            <Field
-              label="Confirm Password"
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              required
-            />
-            {signUpState.status === "error" && (
-              <StatusText tone="error">{signUpState.message}</StatusText>
-            )}
-            {signUpState.status === "check-email" && (
-              <StatusText tone="success">{signUpState.message}</StatusText>
-            )}
-            <SubmitButton pending={signUpPending}>Create Account</SubmitButton>
-          </form>
+          </>
         )}
 
-        <div className="px-gutter flex items-center justify-center gap-1 pb-8 text-sm text-muted">
-          {mode === "login" ? (
-            <>
-              <span>New to Beamori?</span>
-              <button
-                type="button"
-                onClick={() => setMode("signup")}
-                className="font-semibold text-forest"
-              >
-                Sign up
-              </button>
-            </>
-          ) : (
-            <>
-              <span>Already have an account?</span>
+        {mode === "login-sent" && (
+          <PendingScreen>
+            <p className="text-sm text-ink">
+              We&apos;ve sent a login link to <strong>{lastEmail}</strong>. Tap the
+              link in your email to log in.
+            </p>
+            <button
+              type="button"
+              onClick={() => setMode("login-password")}
+              className="text-sm font-semibold text-forest"
+            >
+              Use password instead
+            </button>
+            <BackLink onClick={() => setMode("login")} />
+          </PendingScreen>
+        )}
+
+        {mode === "login-password" && (
+          <>
+            <form
+              action={signInFormAction}
+              className="px-gutter flex flex-col gap-4 pt-6"
+            >
+              <Field
+                label="Email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                defaultValue={lastEmail}
+                required
+              />
+              <Field
+                label="Password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                minLength={6}
+              />
+              {signInState.status === "error" && (
+                <StatusText tone="error">{signInState.message}</StatusText>
+              )}
+              <SubmitButton pending={signInPending}>Log In</SubmitButton>
+            </form>
+            <div className="px-gutter flex items-center justify-between pt-4 pb-8 text-sm">
               <button
                 type="button"
                 onClick={() => setMode("login")}
+                className="text-muted underline"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("forgot")}
                 className="font-semibold text-forest"
               >
-                Log in
+                Forgot password?
               </button>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
+
+        {mode === "signup" && (
+          <>
+            <form
+              action={signUpFormAction}
+              className="px-gutter flex flex-col gap-4 pt-6"
+            >
+              <Field
+                label="Email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                onChange={trackEmail}
+              />
+              <Field
+                label="Mobile Number"
+                name="phone"
+                type="tel"
+                autoComplete="tel"
+                required
+              />
+              <Field
+                label="Preferred Username"
+                name="displayName"
+                type="text"
+                autoComplete="nickname"
+                required
+              />
+              <Field
+                label="Password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                minLength={6}
+              />
+              <Field
+                label="Confirm Password"
+                name="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                required
+                minLength={6}
+              />
+              <Consent
+                termsAccepted={termsAccepted}
+                setTermsAccepted={setTermsAccepted}
+                marketingConsent={marketingConsent}
+                setMarketingConsent={setMarketingConsent}
+              />
+              {signUpState.status === "error" && (
+                <StatusText tone="error">{signUpState.message}</StatusText>
+              )}
+              <SubmitButton pending={signUpPending} disabled={!termsAccepted}>
+                Create Account
+              </SubmitButton>
+            </form>
+            <FooterSwitch
+              prompt="Already have an account?"
+              actionLabel="Log in"
+              onClick={() => setMode("login")}
+            />
+          </>
+        )}
+
+        {mode === "signup-sent" && (
+          <PendingScreen>
+            <p className="text-sm text-ink">
+              We&apos;ve sent a confirmation link to <strong>{lastEmail}</strong>.
+              Click it to finish creating your account.
+            </p>
+            <BackLink onClick={() => setMode("login")} label="Back to login" />
+          </PendingScreen>
+        )}
+
+        {mode === "forgot" && (
+          <>
+            <form
+              action={resetFormAction}
+              className="px-gutter flex flex-col gap-4 pt-6"
+            >
+              <Field
+                label="Email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                defaultValue={lastEmail}
+                required
+                onChange={trackEmail}
+              />
+              {resetState.status === "error" && (
+                <StatusText tone="error">{resetState.message}</StatusText>
+              )}
+              <SubmitButton pending={resetPending}>Send Reset Link</SubmitButton>
+            </form>
+            <div className="px-gutter pt-4 pb-8">
+              <BackLink onClick={() => setMode("login-password")} />
+            </div>
+          </>
+        )}
+
+        {mode === "forgot-sent" && (
+          <PendingScreen>
+            <p className="text-sm text-ink">{resetState.message}</p>
+            <BackLink onClick={() => setMode("login")} label="Back to login" />
+          </PendingScreen>
+        )}
       </div>
     </>,
     document.body,
   );
 }
 
-function Field({
-  label,
-  name,
-  type,
-  autoComplete,
-  required,
+function Consent({
+  termsAccepted,
+  setTermsAccepted,
+  marketingConsent,
+  setMarketingConsent,
 }: {
-  label: string;
-  name: string;
-  type: string;
-  autoComplete?: string;
-  required?: boolean;
+  termsAccepted: boolean;
+  setTermsAccepted: (value: boolean) => void;
+  marketingConsent: boolean;
+  setMarketingConsent: (value: boolean) => void;
 }) {
   return (
-    <label className="flex flex-col gap-1.5">
-      <span className="text-xs font-medium text-muted">{label}</span>
-      <input
-        name={name}
-        type={type}
-        autoComplete={autoComplete}
-        required={required}
-        className="rounded-btn bg-ivory px-4 py-2.5 text-sm text-ink outline-none placeholder:text-muted"
-      />
-    </label>
+    <div className="flex flex-col gap-3">
+      <label className="flex items-start gap-2 text-xs text-muted">
+        <input
+          type="checkbox"
+          checked={marketingConsent}
+          onChange={(e) => setMarketingConsent(e.target.checked)}
+          className="mt-0.5 h-4 w-4 accent-forest"
+        />
+        I consent to receiving Beamori&apos;s updates and promotions.
+      </label>
+      <label className="flex items-start gap-2 text-xs text-muted">
+        <input
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={(e) => setTermsAccepted(e.target.checked)}
+          className="mt-0.5 h-4 w-4 accent-forest"
+        />
+        I have read and accept Beamori&apos;s Terms of Use and Privacy Policy.
+      </label>
+    </div>
   );
 }
 
-function StatusText({
-  tone,
-  children,
+function FooterSwitch({
+  prompt,
+  actionLabel,
+  onClick,
 }: {
-  tone: "error" | "success";
-  children: React.ReactNode;
+  prompt: string;
+  actionLabel: string;
+  onClick: () => void;
 }) {
   return (
-    <p className={`text-sm ${tone === "error" ? "text-red-600" : "text-forest"}`}>
-      {children}
-    </p>
+    <div className="px-gutter flex items-center justify-center gap-1 pt-6 pb-8 text-sm text-muted">
+      <span>{prompt}</span>
+      <button type="button" onClick={onClick} className="font-semibold text-forest">
+        {actionLabel}
+      </button>
+    </div>
   );
 }
 
-function SubmitButton({
-  pending,
-  children,
+function BackLink({
+  onClick,
+  label = "Back",
 }: {
-  pending: boolean;
-  children: React.ReactNode;
+  onClick: () => void;
+  label?: string;
 }) {
   return (
     <button
-      type="submit"
-      disabled={pending}
-      className={`rounded-btn w-full py-3 text-sm font-semibold transition-colors ${
-        pending
-          ? "cursor-not-allowed bg-hairline text-muted"
-          : "bg-forest text-white"
-      }`}
+      type="button"
+      onClick={onClick}
+      className="text-sm font-medium text-muted underline"
     >
-      {pending ? "Please wait…" : children}
+      {label}
     </button>
+  );
+}
+
+function PendingScreen({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="px-gutter flex flex-col items-center gap-4 pt-8 pb-10 text-center">
+      {children}
+    </div>
   );
 }

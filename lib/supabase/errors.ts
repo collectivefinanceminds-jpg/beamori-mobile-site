@@ -16,6 +16,13 @@ export function translateAuthError(message: string): string {
   if (lower.includes("already registered")) {
     return "An account with that email already exists — try logging in instead.";
   }
+  if (
+    lower.includes("user not found") ||
+    lower.includes("unable to validate email") ||
+    lower.includes("signups not allowed for otp")
+  ) {
+    return "We couldn't find an account with that email — try signing up instead.";
+  }
 
   const weakPasswordMatch = message.match(
     /password should be at least (\d+) characters/i,

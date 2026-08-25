@@ -8,7 +8,12 @@ import RecommendedSection from "@/components/home/RecommendedSection";
 import TaskCenterSection from "@/components/home/TaskCenterSection";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ authError?: string }>;
+}) {
+  const { authError } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -26,6 +31,14 @@ export default async function HomePage() {
 
   return (
     <div className="pb-section">
+      {authError && (
+        <div className="px-gutter pt-3">
+          <p className="rounded-card bg-hairline px-4 py-2 text-center text-xs text-ink">
+            That link is invalid or has expired. Please try again.
+          </p>
+        </div>
+      )}
+
       <HeroSection />
 
       <DiagonalOverlapCard>
