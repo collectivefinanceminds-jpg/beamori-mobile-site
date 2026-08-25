@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/purity -- this component intentionally reads
+   Math.random() during render: a fresh phrase on every server render is
+   the actual feature, not an accidental impurity. */
 import SignUpTrigger from "./SignUpTrigger";
 
 const GREETING_PHRASES = [

@@ -79,9 +79,28 @@ export default function LoginSheet({
     initialAuthFormState,
   );
 
-  useEffect(() => {
+  // Mode transitions are derived during render (not in an effect) per
+  // React's "adjusting state based on a prop/state change" pattern — avoids
+  // the extra committed frame a setState-in-effect would cause.
+  const [prevLoginLinkStatus, setPrevLoginLinkStatus] = useState(
+    loginLinkState.status,
+  );
+  if (loginLinkState.status !== prevLoginLinkStatus) {
+    setPrevLoginLinkStatus(loginLinkState.status);
     if (loginLinkState.status === "sent") setMode("login-sent");
-  }, [loginLinkState.status]);
+  }
+
+  const [prevSignUpStatus, setPrevSignUpStatus] = useState(signUpState.status);
+  if (signUpState.status !== prevSignUpStatus) {
+    setPrevSignUpStatus(signUpState.status);
+    if (signUpState.status === "check-email") setMode("signup-sent");
+  }
+
+  const [prevResetStatus, setPrevResetStatus] = useState(resetState.status);
+  if (resetState.status !== prevResetStatus) {
+    setPrevResetStatus(resetState.status);
+    if (resetState.status === "check-email") setMode("forgot-sent");
+  }
 
   useEffect(() => {
     if (signInState.status === "success") {
@@ -91,16 +110,11 @@ export default function LoginSheet({
   }, [signInState.status, router, onClose]);
 
   useEffect(() => {
-    if (signUpState.status === "check-email") setMode("signup-sent");
     if (signUpState.status === "success") {
       router.refresh();
       onClose();
     }
   }, [signUpState.status, router, onClose]);
-
-  useEffect(() => {
-    if (resetState.status === "check-email") setMode("forgot-sent");
-  }, [resetState.status]);
 
   useEffect(() => {
     if (!open) return;
