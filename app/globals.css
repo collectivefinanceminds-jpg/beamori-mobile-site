@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Beamori design tokens
+   Single source of truth for brand colour and geometry.
+   Every value below is available both as a Tailwind utility (bg-ivory,
+   rounded-card, px-gutter) and as a raw CSS variable (var(--color-forest)).
+   --------------------------------------------------------------------------- */
+
+@theme {
+  /* brand */
+  --color-forest: #2a603b;
+  --color-forest-press: #214c2f; /* pressed / active state only */
+  --color-ivory: #fbf9f4; /* warm off-white page background */
+  --color-surface: #ffffff; /* cards sitting on top of ivory */
+  --color-ink: #111111; /* primary text */
+  --color-muted: #8c8c87; /* warm grey: inactive tabs, subtext */
+  --color-hairline: rgba(0, 0, 0, 0.06);
+
+  /* geometry */
+  --spacing-gutter: 1.25rem; /* 20px page horizontal padding */
+  --spacing-section: 1.75rem; /* 28px between page sections */
+  --spacing-navbar: 4rem; /* 64px bottom nav height */
+  --radius-card: 1.25rem; /* 20px card corners */
+  --radius-btn: 9999px; /* pill buttons */
+
+  /* restrained elevation */
+  --shadow-card:
+    0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05);
+
+  /* type — Montserrat, self-hosted via next/font, Arial as fallback */
+  --font-sans: var(--font-montserrat), Arial, Helvetica, sans-serif;
+}
+
+/* Padding that clears the iOS home indicator / Android gesture bar. */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Bottom padding for scrollable content sitting under the fixed nav. */
+@utility pb-nav {
+  padding-bottom: calc(var(--spacing-navbar) + env(safe-area-inset-bottom));
+}
+
+html {
+  /* keeps overscroll/rubber-banding ivory rather than white */
+  background-color: var(--color-ivory);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Login bottom sheet — plain CSS transitions, no animation library. */
+@keyframes scrim-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-scrim-in {
+  animation: scrim-in 200ms ease-out;
+}
+
+.animate-sheet-in {
+  animation: sheet-in 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
