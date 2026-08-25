@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { resolveEmailForUsername } from "@/lib/supabase/admin";
 import { translateAuthError } from "@/lib/supabase/errors";
 import { getSiteUrl } from "@/lib/site";
 
@@ -11,16 +12,30 @@ export type AuthFormState = {
 };
 
 export type LoginLinkFormState = {
-  status: "idle" | "error" | "sent" | "phone-unavailable";
+  status: "idle" | "error" | "sent";
   message: string | null;
 };
 
+const ACCOUNT_NOT_FOUND_MESSAGE =
+  "We couldn't find an account with that email or username — try signing up instead.";
+
 /**
- * Login step 1: single email-or-phone box. Phone numbers can't actually be
- * sent an SMS yet (no provider configured in Supabase), so they're rejected
- * here with a friendly message rather than attempting a call that would
- * fail. Emails get a magic-link sign-in — shouldCreateUser is false because
- * this is the *login* entry point, not signup.
+ * Login accepts either an email or a username (profiles.display_name).
+ * Usernames are resolved to their email server-side via the service-role
+ * client — that mapping is never sent to the browser, only used to
+ * complete the actual Supabase auth call below.
+ */
+async function resolveIdentifierToEmail(
+  identifier: string,
+): Promise<string | null> {
+  if (identifier.includes("@")) return identifier;
+  return resolveEmailForUsername(identifier);
+}
+
+/**
+ * Login step 1: single email-or-username box, sends a magic-link sign-in.
+ * shouldCreateUser is false because this is the *login* entry point, not
+ * signup.
  */
 export async function requestLoginLinkAction(
   _prevState: LoginLinkFormState,
@@ -29,19 +44,17 @@ export async function requestLoginLinkAction(
   const identifier = String(formData.get("identifier") ?? "").trim();
 
   if (!identifier) {
-    return { status: "error", message: "Please enter your email." };
+    return { status: "error", message: "Please enter your email or username." };
   }
 
-  if (!identifier.includes("@")) {
-    return {
-      status: "phone-unavailable",
-      message: "Phone login is coming soon — please use your email instead.",
-    };
+  const email = await resolveIdentifierToEmail(identifier);
+  if (!email) {
+    return { status: "error", message: ACCOUNT_NOT_FOUND_MESSAGE };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
-    email: identifier,
+    email,
     options: {
       shouldCreateUser: false,
       emailRedirectTo: `${getSiteUrl()}/auth/confirm?next=/`,
@@ -59,14 +72,19 @@ export async function signInAction(
   _prevState: AuthFormState,
   formData: FormData,
 ): Promise<AuthFormState> {
-  const email = String(formData.get("email") ?? "").trim();
+  const identifier = String(formData.get("identifier") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
-  if (!email || !password) {
+  if (!identifier || !password) {
     return {
       status: "error",
-      message: "Please enter your email and password.",
+      message: "Please enter your email/username and password.",
     };
+  }
+
+  const email = await resolveIdentifierToEmail(identifier);
+  if (!email) {
+    return { status: "error", message: ACCOUNT_NOT_FOUND_MESSAGE };
   }
 
   const supabase = await createClient();
@@ -145,19 +163,27 @@ export async function signUpAction(
   return { status: "success", message: null };
 }
 
+const RESET_SENT_MESSAGE =
+  "If an account exists for that email or username, a reset link is on its way.";
+
 /**
- * Always reports success (barring a genuine send failure) even if the email
- * has no account, so this can't be used to probe which emails are
- * registered.
+ * Always reports the same neutral "check email" outcome — whether the
+ * identifier matched no account, or the reset email genuinely sent — so
+ * this can't be used to probe which emails/usernames are registered.
  */
 export async function requestPasswordResetAction(
   _prevState: AuthFormState,
   formData: FormData,
 ): Promise<AuthFormState> {
-  const email = String(formData.get("email") ?? "").trim();
+  const identifier = String(formData.get("identifier") ?? "").trim();
 
+  if (!identifier) {
+    return { status: "error", message: "Please enter your email or username." };
+  }
+
+  const email = await resolveIdentifierToEmail(identifier);
   if (!email) {
-    return { status: "error", message: "Please enter your email." };
+    return { status: "check-email", message: RESET_SENT_MESSAGE };
   }
 
   const supabase = await createClient();
@@ -169,10 +195,7 @@ export async function requestPasswordResetAction(
     return { status: "error", message: translateAuthError(error.message) };
   }
 
-  return {
-    status: "check-email",
-    message: "If an account exists for that email, a reset link is on its way.",
-  };
+  return { status: "check-email", message: RESET_SENT_MESSAGE };
 }
 
 export async function updatePasswordAction(

@@ -58,7 +58,7 @@ export default function LoginSheet({
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("login");
   const [returnMode, setReturnMode] = useState<"login" | "signup">("login");
-  const [lastEmail, setLastEmail] = useState("");
+  const [lastIdentifier, setLastEmail] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
 
@@ -113,7 +113,7 @@ export default function LoginSheet({
 
   if (!open) return null;
 
-  const trackEmail = (event: ChangeEvent<HTMLInputElement>) => {
+  const trackIdentifier = (event: ChangeEvent<HTMLInputElement>) => {
     setLastEmail(event.target.value);
   };
 
@@ -149,12 +149,12 @@ export default function LoginSheet({
               className="px-gutter flex flex-col gap-4 pt-6"
             >
               <Field
-                label="Email or Phone Number"
+                label="Email or Username"
                 name="identifier"
                 type="text"
                 autoComplete="username"
                 required
-                onChange={trackEmail}
+                onChange={trackIdentifier}
               />
               <Consent
                 termsAccepted={termsAccepted}
@@ -166,8 +166,7 @@ export default function LoginSheet({
                   setMode("terms");
                 }}
               />
-              {(loginLinkState.status === "error" ||
-                loginLinkState.status === "phone-unavailable") && (
+              {loginLinkState.status === "error" && (
                 <StatusText tone="error">{loginLinkState.message}</StatusText>
               )}
               <SubmitButton pending={loginLinkPending} disabled={!termsAccepted}>
@@ -194,7 +193,7 @@ export default function LoginSheet({
         {mode === "login-sent" && (
           <PendingScreen>
             <p className="text-sm text-ink">
-              We&apos;ve sent a login link to <strong>{lastEmail}</strong>. Tap the
+              We&apos;ve sent a login link to <strong>{lastIdentifier}</strong>. Tap the
               link in your email to log in.
             </p>
             <button
@@ -215,11 +214,11 @@ export default function LoginSheet({
               className="px-gutter flex flex-col gap-4 pt-6"
             >
               <Field
-                label="Email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                defaultValue={lastEmail}
+                label="Email or Username"
+                name="identifier"
+                type="text"
+                autoComplete="username"
+                defaultValue={lastIdentifier}
                 required
               />
               <Field
@@ -266,7 +265,7 @@ export default function LoginSheet({
                 type="email"
                 autoComplete="email"
                 required
-                onChange={trackEmail}
+                onChange={trackIdentifier}
               />
               <Field
                 label="Mobile Number"
@@ -326,7 +325,7 @@ export default function LoginSheet({
         {mode === "signup-sent" && (
           <PendingScreen>
             <p className="text-sm text-ink">
-              We&apos;ve sent a confirmation link to <strong>{lastEmail}</strong>.
+              We&apos;ve sent a confirmation link to <strong>{lastIdentifier}</strong>.
               Click it to finish creating your account.
             </p>
             <BackLink onClick={() => setMode("login")} label="Back to login" />
@@ -340,13 +339,13 @@ export default function LoginSheet({
               className="px-gutter flex flex-col gap-4 pt-6"
             >
               <Field
-                label="Email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                defaultValue={lastEmail}
+                label="Email or Username"
+                name="identifier"
+                type="text"
+                autoComplete="username"
+                defaultValue={lastIdentifier}
                 required
-                onChange={trackEmail}
+                onChange={trackIdentifier}
               />
               {resetState.status === "error" && (
                 <StatusText tone="error">{resetState.message}</StatusText>
