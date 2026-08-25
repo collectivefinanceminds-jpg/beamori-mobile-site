@@ -1,6 +1,3 @@
-import Image from "next/image";
-import beamoriIcon from "@/public/brand/beamori-icon-black.png";
-import { signOutAction } from "@/app/actions/auth";
 import SignUpTrigger from "./SignUpTrigger";
 
 const GREETING_PHRASES = [
@@ -35,21 +32,9 @@ export default function LoginGreeting({
       </span>
 
       {displayName ? (
-        <form
-          action={signOutAction}
-          className="flex items-center justify-self-end gap-2"
-        >
-          <Image src={beamoriIcon} alt="" className="h-6 w-6" />
-          <span className="text-base font-semibold text-ink">
-            Welcome, {displayName}!
-          </span>
-          <button
-            type="submit"
-            className="text-xs font-medium text-muted underline"
-          >
-            Log out
-          </button>
-        </form>
+        <span className="justify-self-end text-base font-semibold text-ink">
+          Welcome, {displayName}!
+        </span>
       ) : (
         <SignUpTrigger />
       )}
