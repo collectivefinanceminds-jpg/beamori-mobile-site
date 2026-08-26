@@ -15,7 +15,7 @@ export default function TaskCenterSection() {
   return (
     <section className="pt-section">
       <h2 className="px-gutter text-lg font-semibold text-ink">Quest</h2>
-      <div className="px-gutter mt-1">
+      <div className="px-gutter mt-3">
         <TaskCenterCarousel tasks={activeTasks} />
       </div>
     </section>

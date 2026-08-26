@@ -13,12 +13,6 @@ const AUTO_ADVANCE_MS = 3000;
  * fighting the user's choice. Dots are always visible here (unlike
  * Hero's hover-only dots), matching the reference. Auto-advance is
  * skipped entirely under prefers-reduced-motion.
- *
- * The scroll track has vertical padding (py-4) because overflow-x-auto
- * implicitly makes overflow-y auto too, which clips shadow-card's soft
- * blur flush against the card's own box — most visible right at the
- * rounded corners. The padding gives the shadow room to render; the dots
- * row below pulls up to offset the extra bottom space it adds.
  */
 export default function TaskCenterCarousel({ tasks }: { tasks: Task[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -69,7 +63,7 @@ export default function TaskCenterCarousel({ tasks }: { tasks: Task[] }) {
       <div
         ref={containerRef}
         aria-label="Active tasks"
-        className="flex snap-x snap-mandatory overflow-x-auto py-4 scrollbar-none [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden"
       >
         {tasks.map((task, index) => (
           <div
@@ -85,7 +79,7 @@ export default function TaskCenterCarousel({ tasks }: { tasks: Task[] }) {
       </div>
 
       {tasks.length > 1 && (
-        <div className="-mt-1 flex justify-center gap-1.5">
+        <div className="mt-3 flex justify-center gap-1.5">
           {tasks.map((task, index) => (
             <span
               key={task.id}
