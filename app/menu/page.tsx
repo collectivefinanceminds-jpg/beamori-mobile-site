@@ -1,8 +1,17 @@
+import { MENU_CATEGORIES, MENU_PRODUCTS } from "@/data/menu";
+import { findPublicAsset } from "@/lib/media";
+import MenuExperience from "@/components/menu/MenuExperience";
+import type { ResolvedMenuProduct } from "@/components/menu/types";
+
 export default function MenuPage() {
+  const resolvedProducts: ResolvedMenuProduct[] = MENU_PRODUCTS.map(
+    (product) => ({
+      ...product,
+      imageSrc: findPublicAsset(`menu/${product.id}`),
+    }),
+  );
+
   return (
-    <div className="px-gutter pt-section">
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">Menu</h1>
-      <p className="mt-2 text-sm text-muted">Coming soon</p>
-    </div>
+    <MenuExperience categories={MENU_CATEGORIES} products={resolvedProducts} />
   );
 }
