@@ -16,38 +16,43 @@ export default function TaskCenterCard({ task }: { task: Task }) {
   return (
     <Link
       href={`/tasks/${task.id}`}
-      className="relative flex aspect-5/2 w-full items-stretch gap-3 overflow-hidden rounded-card bg-surface p-4 shadow-card"
+      className="relative block aspect-5/2 w-full rounded-card bg-surface shadow-card"
     >
-      <div className="flex min-w-0 flex-[1.5] flex-col justify-between">
-        <h3 className="line-clamp-2 text-sm font-bold text-ink">
-          {task.title}
-        </h3>
+      {/* overflow-hidden lives on this inner layer, separate from the
+          shadow above — putting both on the same element clips the
+          shadow unevenly right at the rounded corners. */}
+      <div className="flex h-full items-stretch gap-3 overflow-hidden rounded-card p-4">
+        <div className="flex min-w-0 flex-[1.5] flex-col justify-between">
+          <h3 className="line-clamp-2 text-sm font-bold text-ink">
+            {task.title}
+          </h3>
 
-        <div className="flex flex-col gap-1.5">
-          <TaskProgressBar
-            current={task.currentProgress}
-            required={task.requiredProgress}
-            size="sm"
-          />
-          <p className="text-xs text-muted">
-            {formatTaskProgressLabel(
-              task.currentProgress,
-              task.requiredProgress,
-              task.progressUnit,
-            )}
-          </p>
+          <div className="flex flex-col gap-1.5">
+            <TaskProgressBar
+              current={task.currentProgress}
+              required={task.requiredProgress}
+              size="sm"
+            />
+            <p className="text-xs text-muted">
+              {formatTaskProgressLabel(
+                task.currentProgress,
+                task.requiredProgress,
+                task.progressUnit,
+              )}
+            </p>
+          </div>
+
+          <span className="rounded-btn self-start bg-forest px-4 py-1.5 text-xs font-semibold text-white">
+            {task.ctaLabel}
+          </span>
         </div>
 
-        <span className="rounded-btn self-start bg-forest px-4 py-1.5 text-xs font-semibold text-white">
-          {task.ctaLabel}
-        </span>
+        <RewardImageSlot
+          src={task.rewardImage}
+          alt={task.rewardName}
+          className="flex-1 shrink-0"
+        />
       </div>
-
-      <RewardImageSlot
-        src={task.rewardImage}
-        alt={task.rewardName}
-        className="flex-1 shrink-0"
-      />
     </Link>
   );
 }
