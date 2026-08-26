@@ -31,16 +31,19 @@ export default function MenuProductRow({
         )}
       </div>
 
-      {/* justify-between keeps name/description/price pinned to the top,
-          middle, and bottom of the row regardless of whether a
-          description exists — the middle slot is always reserved. */}
+      {/* justify-between pins the name+description group to the top and
+          price to the bottom of the row; the description itself sits
+          directly under the name with its own margin, not floated to
+          the row's vertical middle. */}
       <div className="flex min-w-0 flex-1 flex-col justify-between self-stretch py-0.5">
-        <p className="truncate text-sm font-semibold text-ink">
-          {product.name}
-        </p>
-        <p className="line-clamp-1 text-xs text-muted">
-          {product.description}
-        </p>
+        <div>
+          <p className="truncate text-sm font-semibold text-ink">
+            {product.name}
+          </p>
+          <p className="mt-1 line-clamp-1 text-xs text-muted">
+            {product.description}
+          </p>
+        </div>
         <div className="flex items-baseline gap-1.5">
           <span className="text-sm font-semibold text-forest">
             {formatSgd(product.priceCents)}
