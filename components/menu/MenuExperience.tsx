@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { MenuCategory } from "@/data/menu";
 import { searchProducts } from "@/lib/menu";
-import type { ResolvedMenuProduct } from "./types";
+import type { ResolvedMenuCategory, ResolvedMenuProduct } from "./types";
 import CategorySidebar from "./CategorySidebar";
 import MenuCategoryCard from "./MenuCategoryCard";
 import MenuSearchBar from "./MenuSearchBar";
@@ -12,7 +11,7 @@ export default function MenuExperience({
   categories,
   products,
 }: {
-  categories: MenuCategory[];
+  categories: ResolvedMenuCategory[];
   products: ResolvedMenuProduct[];
 }) {
   const [query, setQuery] = useState("");
@@ -89,9 +88,10 @@ export default function MenuExperience({
           <h1 className="shrink-0 text-2xl font-bold text-ink">Pickup</h1>
           <MenuSearchBar value={query} onChange={setQuery} />
         </div>
-        <p className="mt-2 text-xs text-muted">
-          298C Compassvale Street, #15-80, Singapore 543298
-        </p>
+        <div className="mt-2">
+          <p className="text-sm font-semibold text-ink">298C Compassvale St</p>
+          <p className="text-[0.6875rem] text-muted">543298, #15-80</p>
+        </div>
       </div>
 
       <div className="mt-4 flex items-start gap-3 px-gutter">

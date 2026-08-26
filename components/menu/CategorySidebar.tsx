@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { MenuCategory } from "@/data/menu";
+import Image from "next/image";
+import type { ResolvedMenuCategory } from "./types";
 
 /**
  * Narrow, un-carded left nav — shares the page's own background so it
@@ -13,7 +14,7 @@ export default function CategorySidebar({
   activeCategoryId,
   onSelect,
 }: {
-  categories: MenuCategory[];
+  categories: ResolvedMenuCategory[];
   activeCategoryId: string | null;
   onSelect: (categoryId: string) => void;
 }) {
@@ -46,12 +47,28 @@ export default function CategorySidebar({
                 type="button"
                 onClick={() => onSelect(category.id)}
                 aria-current={isActive ? "true" : undefined}
-                className={`w-full border-l-2 py-3 text-center text-xs leading-tight transition-colors ${
+                className={`flex w-full flex-col items-center gap-1.5 border-l-2 py-3 text-center text-xs leading-tight transition-colors ${
                   isActive
                     ? "border-forest font-semibold text-forest"
                     : "border-transparent font-medium text-muted"
                 }`}
               >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-ivory">
+                  {category.iconSrc ? (
+                    <Image
+                      src={category.iconSrc}
+                      alt=""
+                      width={40}
+                      height={40}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span
+                      title={`public/menu-categories/${category.id}.png`}
+                      className="h-6 w-6 rounded-full border border-dashed border-hairline"
+                    />
+                  )}
+                </span>
                 {category.name}
               </button>
             </li>

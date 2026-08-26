@@ -1,5 +1,4 @@
-import type { MenuCategory } from "@/data/menu";
-import type { ResolvedMenuProduct } from "./types";
+import type { ResolvedMenuCategory, ResolvedMenuProduct } from "./types";
 import MenuProductRow from "./MenuProductRow";
 
 /**
@@ -13,7 +12,7 @@ export default function MenuCategoryCard({
   products,
   registerRef,
 }: {
-  category: MenuCategory;
+  category: ResolvedMenuCategory;
   products: ResolvedMenuProduct[];
   registerRef: (categoryId: string, el: HTMLDivElement | null) => void;
 }) {
@@ -23,7 +22,7 @@ export default function MenuCategoryCard({
     <div
       ref={(el) => registerRef(category.id, el)}
       data-category-id={category.id}
-      className="overflow-hidden rounded-card bg-surface shadow-card"
+      className="overflow-hidden rounded-xl bg-surface shadow-card"
     >
       <h2 className="sticky top-0 z-10 bg-surface px-4 pt-4 pb-3 text-base font-bold text-ink">
         {category.name}

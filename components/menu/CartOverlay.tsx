@@ -24,7 +24,7 @@ export default function CartOverlay() {
       {totalItems === 0 ? (
         <div className="flex justify-end">
           <span className="rounded-btn pointer-events-auto flex items-center gap-1.5 bg-surface/90 px-3 py-2 text-xs font-medium text-muted shadow-card">
-            <CartIcon className="h-4 w-4" />0 item
+            <CartIcon className="h-5.5 w-5.5" />0 item
           </span>
         </div>
       ) : (

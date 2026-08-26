@@ -1,7 +1,10 @@
 import { MENU_CATEGORIES, MENU_PRODUCTS } from "@/data/menu";
 import { findPublicAsset } from "@/lib/media";
 import MenuExperience from "@/components/menu/MenuExperience";
-import type { ResolvedMenuProduct } from "@/components/menu/types";
+import type {
+  ResolvedMenuCategory,
+  ResolvedMenuProduct,
+} from "@/components/menu/types";
 
 export default function MenuPage() {
   const resolvedProducts: ResolvedMenuProduct[] = MENU_PRODUCTS.map(
@@ -11,7 +14,17 @@ export default function MenuPage() {
     }),
   );
 
+  const resolvedCategories: ResolvedMenuCategory[] = MENU_CATEGORIES.map(
+    (category) => ({
+      ...category,
+      iconSrc: findPublicAsset(`menu-categories/${category.id}`),
+    }),
+  );
+
   return (
-    <MenuExperience categories={MENU_CATEGORIES} products={resolvedProducts} />
+    <MenuExperience
+      categories={resolvedCategories}
+      products={resolvedProducts}
+    />
   );
 }

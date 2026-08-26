@@ -13,15 +13,15 @@ export default function MenuProductRow({
   return (
     <Link
       href={`/menu/${product.id}`}
-      className={`flex items-center gap-3 px-4 py-3 ${showDivider ? "border-b border-hairline" : ""}`}
+      className={`flex items-center gap-3 px-4 py-4 ${showDivider ? "border-b border-hairline" : ""}`}
     >
-      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-ivory">
+      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-ivory">
         {product.imageSrc ? (
           <Image
             src={product.imageSrc}
             alt={product.name}
             fill
-            sizes="64px"
+            sizes="80px"
             className="object-cover"
           />
         ) : (
@@ -31,14 +31,17 @@ export default function MenuProductRow({
         )}
       </div>
 
-      <div className="min-w-0 flex-1">
+      {/* justify-between keeps name/description/price pinned to the top,
+          middle, and bottom of the row regardless of whether a
+          description exists — the middle slot is always reserved. */}
+      <div className="flex min-w-0 flex-1 flex-col justify-between self-stretch py-0.5">
         <p className="truncate text-sm font-semibold text-ink">
           {product.name}
         </p>
-        {product.description && (
-          <p className="truncate text-xs text-muted">{product.description}</p>
-        )}
-        <div className="mt-1 flex items-baseline gap-1.5">
+        <p className="line-clamp-1 text-xs text-muted">
+          {product.description}
+        </p>
+        <div className="flex items-baseline gap-1.5">
           <span className="text-sm font-semibold text-forest">
             {formatSgd(product.priceCents)}
           </span>
