@@ -53,13 +53,13 @@ export default function CategorySidebar({
                     : "border-transparent font-medium text-muted"
                 }`}
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-ivory">
+                <span className="flex h-12.5 w-12.5 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-ivory">
                   {category.iconSrc ? (
                     <Image
                       src={category.iconSrc}
                       alt=""
-                      width={40}
-                      height={40}
+                      width={50}
+                      height={50}
                       className="h-full w-full object-cover"
                     />
                   ) : (

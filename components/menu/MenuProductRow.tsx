@@ -15,13 +15,13 @@ export default function MenuProductRow({
       href={`/menu/${product.id}`}
       className={`flex items-center gap-3 px-4 py-4 ${showDivider ? "border-b border-hairline" : ""}`}
     >
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-ivory">
+      <div className="relative h-25 w-25 shrink-0 overflow-hidden rounded-lg bg-ivory">
         {product.imageSrc ? (
           <Image
             src={product.imageSrc}
             alt={product.name}
             fill
-            sizes="80px"
+            sizes="100px"
             className="object-cover"
           />
         ) : (
