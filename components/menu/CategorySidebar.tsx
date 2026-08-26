@@ -53,7 +53,7 @@ export default function CategorySidebar({
                     : "border-transparent font-medium text-muted"
                 }`}
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-ivory">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-ivory">
                   {category.iconSrc ? (
                     <Image
                       src={category.iconSrc}
@@ -65,7 +65,7 @@ export default function CategorySidebar({
                   ) : (
                     <span
                       title={`public/menu-categories/${category.id}.png`}
-                      className="h-6 w-6 rounded-full border border-dashed border-hairline"
+                      className="h-6 w-6 rounded border border-dashed border-hairline"
                     />
                   )}
                 </span>
