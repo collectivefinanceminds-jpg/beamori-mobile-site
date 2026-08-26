@@ -1,3 +1,25 @@
+import type { Task } from "@/data/tasks";
+
+/**
+ * Simulates the future backend ranking with mock data only — Priority 1:
+ * closest to completion by percentage (not raw count, so 4/5 outranks
+ * 2/3). Priority 2: among ties, the task requiring fewer total steps is
+ * "easier" and ranks higher. Real ranking (eligibility, randomised
+ * fallback, etc.) is backend work for later.
+ */
+export function rankTasksForHomepage(tasks: Task[], limit = 4): Task[] {
+  return [...tasks]
+    .sort((a, b) => {
+      const percentA =
+        a.requiredProgress > 0 ? a.currentProgress / a.requiredProgress : 0;
+      const percentB =
+        b.requiredProgress > 0 ? b.currentProgress / b.requiredProgress : 0;
+      if (percentB !== percentA) return percentB - percentA;
+      return a.requiredProgress - b.requiredProgress;
+    })
+    .slice(0, limit);
+}
+
 export function formatTaskProgressLabel(
   current: number,
   required: number,

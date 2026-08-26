@@ -1,13 +1,15 @@
 import { TASKS } from "@/data/tasks";
+import { rankTasksForHomepage } from "@/lib/tasks";
 import TaskCenterCarousel from "./TaskCenterCarousel";
 
 /**
- * Up to 4 active tasks. Selection/ranking (closest-to-completion first,
- * etc.) is future backend logic — for this frontend phase the first 4
- * mock tasks are shown as-is.
+ * Up to 4 active tasks, ranked closest-to-completion first and, among
+ * ties, easiest-to-complete next — simulated over mock data (see
+ * rankTasksForHomepage). Real eligibility/randomised-fallback ranking is
+ * future backend work.
  */
 export default function TaskCenterSection() {
-  const activeTasks = TASKS.slice(0, 4);
+  const activeTasks = rankTasksForHomepage(TASKS);
   if (activeTasks.length === 0) return null;
 
   return (
