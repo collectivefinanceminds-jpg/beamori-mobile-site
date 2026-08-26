@@ -5,6 +5,7 @@ import { searchProducts } from "@/lib/menu";
 import type { ResolvedMenuCategory, ResolvedMenuProduct } from "./types";
 import CategorySidebar from "./CategorySidebar";
 import MenuCategoryCard from "./MenuCategoryCard";
+import { MapPinIcon } from "./MenuIcons";
 import MenuSearchBar from "./MenuSearchBar";
 
 export default function MenuExperience({
@@ -93,11 +94,12 @@ export default function MenuExperience({
             href="https://maps.app.goo.gl/y7aJM9HSDr75GrSc6"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-semibold text-ink underline-offset-2 hover:underline"
+            className="flex items-center gap-1 text-sm text-ink underline-offset-2 hover:underline"
           >
+            <MapPinIcon className="h-3.5 w-3.5 shrink-0 text-forest" />
             298C Compassvale Street, Singapore 543298
           </a>
-          <p className="text-[0.6875rem] text-muted">Unit No: #15-80</p>
+          <p className="mt-0.5 text-xs text-muted">Unit No: #15-80</p>
         </div>
       </div>
 
