@@ -30,8 +30,9 @@ export default function TaskProgressBar({
         style={{ width: `${fraction * 100}%` }}
       />
       {Array.from({ length: markerCount }).map((_, index) => {
-        const position =
-          markerCount > 1 ? (index / (markerCount - 1)) * 100 : 100;
+        // Markers sit at the end of each checkpoint (never at the start
+        // line) — index 0 is the "1 completed" mark, not "0 completed".
+        const position = ((index + 1) / markerCount) * 100;
         const reached = index + 1 <= current;
         return (
           <span
