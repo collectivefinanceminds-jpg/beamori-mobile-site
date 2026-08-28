@@ -24,12 +24,19 @@ export const MENU_CATEGORIES: MenuCategory[] = [
   { id: "soda-spritz", name: "Soda Spritz", sortOrder: 4 },
   { id: "others", name: "Others", sortOrder: 5 },
   { id: "beamori-specials", name: "Beamori Specials", sortOrder: 6 },
+  { id: "bundle-deals", name: "Bundle Deals", sortOrder: 7 },
 ];
 
 // Flat placeholder price across the menu — matches the existing $6.80
 // Matcha Latte price point in data/recommended.ts. Edit per-item once
 // real pricing is decided.
 const GENERAL_PRICE_CENTS = 680;
+
+// Bundle placeholder prices are scaled roughly to item count rather than
+// reusing the flat single-drink price, since a combo obviously isn't
+// worth the same as one drink — still just a placeholder, edit freely.
+const CHICKEN_POPPER_COMBO_PRICE_CENTS = 980;
+const BUDDY_COMBO_PRICE_CENTS = 1380;
 
 export const MENU_PRODUCTS: MenuProduct[] = [
   {
@@ -137,6 +144,22 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     limitedTime: true,
+  },
+  {
+    id: "chicken-popper-combo",
+    name: "Chicken Popper Combo",
+    category: "bundle-deals",
+    description: "1 drink + 1 chicken poppers",
+    priceCents: CHICKEN_POPPER_COMBO_PRICE_CENTS,
+    available: true,
+  },
+  {
+    id: "buddy-combo",
+    name: "Buddy Combo",
+    category: "bundle-deals",
+    description: "2 drinks + 1 snack",
+    priceCents: BUDDY_COMBO_PRICE_CENTS,
+    available: true,
   },
 ];
 
