@@ -53,13 +53,13 @@ export default function CategorySidebar({
                     : "border-transparent font-medium text-muted"
                 }`}
               >
-                <span className="flex h-12.5 w-12.5 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-ivory">
+                <span className="flex h-12.25 w-12.25 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-ivory">
                   {category.iconSrc ? (
                     <Image
                       src={category.iconSrc}
                       alt=""
-                      width={50}
-                      height={50}
+                      width={49}
+                      height={49}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -69,11 +69,7 @@ export default function CategorySidebar({
                     />
                   )}
                 </span>
-                <span className="flex flex-col">
-                  {category.name.split(" ").map((word) => (
-                    <span key={word}>{word}</span>
-                  ))}
-                </span>
+                {category.name}
               </button>
             </li>
           );

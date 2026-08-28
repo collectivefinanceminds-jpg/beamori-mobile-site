@@ -91,6 +91,9 @@ export default function MenuExperience({
           <MenuSearchBar value={query} onChange={setQuery} />
         </div>
         <div className="mt-5">
+          <StoreAvailability />
+        </div>
+        <div className="mt-5">
           <a
             href="https://maps.app.goo.gl/y7aJM9HSDr75GrSc6"
             target="_blank"
@@ -102,7 +105,6 @@ export default function MenuExperience({
           </a>
           <p className="mt-0.5 text-xs text-muted">Unit No: #15-80</p>
         </div>
-        <StoreAvailability />
       </div>
 
       <div className="mt-4 flex items-start gap-3 px-gutter">
