@@ -116,13 +116,15 @@ export default function StoreAvailability() {
                         key={date.toISOString()}
                         type="button"
                         onClick={() => setSelectedDate(date)}
-                        className={`flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 text-sm transition-colors ${
+                        className={`flex flex-col items-center justify-center gap-0.5 rounded-lg border-2 py-2 text-sm transition-colors ${
                           hours.isOpen ? "bg-forest/15" : "bg-hairline"
                         } ${isPast ? "opacity-40" : ""} ${
+                          isSelected || isToday ? "text-ink" : "text-muted"
+                        } ${
                           isSelected
-                            ? "font-semibold text-ink"
-                            : "text-muted"
-                        } ${isToday ? "ring-1 ring-forest" : ""}`}
+                            ? "border-forest font-semibold"
+                            : "border-transparent"
+                        }`}
                       >
                         {date.getDate()}
                       </button>
