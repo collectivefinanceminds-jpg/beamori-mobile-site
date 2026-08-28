@@ -44,11 +44,11 @@ export default function StoreAvailability() {
       <button
         type="button"
         onClick={() => setSheetOpen(true)}
-        className="flex flex-col items-start gap-1.5"
-        style={{ "--cta-size": "1.0625rem" } as React.CSSProperties}
+        className="flex flex-col items-center gap-1"
+        style={{ "--cta-size": "0.956rem" } as React.CSSProperties}
       >
         <span
-          className={`rounded-btn px-4 py-2 font-bold ${
+          className={`rounded-btn px-[0.667rem] py-[0.333rem] font-bold ${
             openNow ? "bg-forest/15 text-forest" : "bg-hairline text-muted"
           }`}
           style={{ fontSize: "var(--cta-size)" }}

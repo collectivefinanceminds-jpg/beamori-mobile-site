@@ -91,9 +91,6 @@ export default function MenuExperience({
           <MenuSearchBar value={query} onChange={setQuery} />
         </div>
         <div className="mt-5">
-          <StoreAvailability />
-        </div>
-        <div className="mt-5">
           <a
             href="https://maps.app.goo.gl/y7aJM9HSDr75GrSc6"
             target="_blank"
@@ -104,6 +101,9 @@ export default function MenuExperience({
             298C Compassvale Street, Singapore 543298
           </a>
           <p className="mt-0.5 text-xs text-muted">Unit No: #15-80</p>
+        </div>
+        <div className="mt-3">
+          <StoreAvailability />
         </div>
       </div>
 
