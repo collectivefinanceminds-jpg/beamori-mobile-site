@@ -1,8 +1,8 @@
 import Link from "next/link";
-import type { Task } from "@/data/tasks";
 import { formatTaskProgressLabel } from "@/lib/tasks";
 import RewardImageSlot from "@/components/shared/RewardImageSlot";
 import TaskProgressBar from "@/components/shared/TaskProgressBar";
+import type { ResolvedTask } from "./types";
 
 /**
  * The entire card is one tap target to the task detail page — the CTA
@@ -12,7 +12,7 @@ import TaskProgressBar from "@/components/shared/TaskProgressBar";
  * which also gives the reward-image slot correct responsive scaling for
  * free instead of hardcoded breakpoint widths.
  */
-export default function TaskCenterCard({ task }: { task: Task }) {
+export default function TaskCenterCard({ task }: { task: ResolvedTask }) {
   return (
     <Link
       href={`/tasks/${task.id}`}
@@ -44,7 +44,7 @@ export default function TaskCenterCard({ task }: { task: Task }) {
       </div>
 
       <RewardImageSlot
-        src={task.rewardImage}
+        src={task.rewardImageSrc}
         alt={task.rewardName}
         className="flex-1 shrink-0"
       />

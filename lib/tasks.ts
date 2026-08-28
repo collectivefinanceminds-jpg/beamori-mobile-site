@@ -7,7 +7,10 @@ import type { Task } from "@/data/tasks";
  * "easier" and ranks higher. Real ranking (eligibility, randomised
  * fallback, etc.) is backend work for later.
  */
-export function rankTasksForHomepage(tasks: Task[], limit = 4): Task[] {
+export function rankTasksForHomepage<T extends Task>(
+  tasks: T[],
+  limit = 4,
+): T[] {
   return [...tasks]
     .sort((a, b) => {
       const percentA =

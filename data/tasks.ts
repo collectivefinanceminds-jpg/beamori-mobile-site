@@ -7,8 +7,6 @@ export type Task = {
   requiredProgress: number;
   progressUnit: string;
   ctaLabel: string;
-  /** Path under public/, e.g. "home/quest/order-5-drinks.png" — null until real artwork is supplied. */
-  rewardImage: string | null;
   rewardName: string;
   status: TaskStatus;
   /** ISO date string, or null for tasks with no deadline. */
@@ -17,6 +15,10 @@ export type Task = {
 
 // Mock data only — the shape is designed to map 1:1 onto a future
 // Supabase `tasks` table without redesigning any component.
+//
+// Reward artwork isn't stored here — it's resolved from
+// public/home/quest/<task.id>.{png,jpg,jpeg,webp}, same drop-in
+// convention as the rest of the homepage (see RewardImageSlot usage).
 export const TASKS: Task[] = [
   {
     id: "order-1-drink",
@@ -25,7 +27,6 @@ export const TASKS: Task[] = [
     requiredProgress: 1,
     progressUnit: "drink",
     ctaLabel: "Order Now",
-    rewardImage: null,
     rewardName: "First Sip Badge",
     status: "in-progress",
     endsAt: null,
@@ -37,7 +38,6 @@ export const TASKS: Task[] = [
     requiredProgress: 3,
     progressUnit: "drink",
     ctaLabel: "Order Now",
-    rewardImage: null,
     rewardName: "Weekly Regular",
     status: "in-progress",
     endsAt: "2026-09-01T00:00:00.000Z",
@@ -49,7 +49,6 @@ export const TASKS: Task[] = [
     requiredProgress: 5,
     progressUnit: "drink",
     ctaLabel: "Order Now",
-    rewardImage: null,
     rewardName: "August Brew Buddy",
     status: "in-progress",
     endsAt: "2026-08-31T23:59:59.000Z",
@@ -61,7 +60,6 @@ export const TASKS: Task[] = [
     requiredProgress: 2,
     progressUnit: "item",
     ctaLabel: "View Menu",
-    rewardImage: null,
     rewardName: "Explorer Badge",
     status: "in-progress",
     endsAt: null,

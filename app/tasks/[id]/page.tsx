@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTaskById, type TaskStatus } from "@/data/tasks";
+import { findPublicAsset } from "@/lib/media";
 import { formatTaskCountdown, formatTaskProgressLabel } from "@/lib/tasks";
 import RewardImageSlot from "@/components/shared/RewardImageSlot";
 import TaskProgressBar from "@/components/shared/TaskProgressBar";
@@ -22,6 +23,7 @@ export default async function TaskDetailPage({
   const task = getTaskById(id);
   if (!task) notFound();
 
+  const rewardImageSrc = findPublicAsset(`home/quest/${task.id}`);
   const countdown = formatTaskCountdown(task.endsAt);
 
   return (
@@ -37,7 +39,7 @@ export default async function TaskDetailPage({
 
       <div className="px-gutter mt-8 flex justify-center">
         <RewardImageSlot
-          src={task.rewardImage}
+          src={rewardImageSrc}
           alt={task.rewardName}
           className="h-48 w-48"
         />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Task } from "@/data/tasks";
+import type { ResolvedTask } from "./types";
 import TaskCenterCard from "./TaskCenterCard";
 
 const AUTO_ADVANCE_MS = 3000;
@@ -14,7 +14,11 @@ const AUTO_ADVANCE_MS = 3000;
  * Hero's hover-only dots), matching the reference. Auto-advance is
  * skipped entirely under prefers-reduced-motion.
  */
-export default function TaskCenterCarousel({ tasks }: { tasks: Task[] }) {
+export default function TaskCenterCarousel({
+  tasks,
+}: {
+  tasks: ResolvedTask[];
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);

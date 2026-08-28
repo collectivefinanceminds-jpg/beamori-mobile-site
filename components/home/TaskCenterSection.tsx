@@ -1,5 +1,7 @@
 import { TASKS } from "@/data/tasks";
+import { findPublicAsset } from "@/lib/media";
 import { rankTasksForHomepage } from "@/lib/tasks";
+import type { ResolvedTask } from "./types";
 import TaskCenterCarousel from "./TaskCenterCarousel";
 
 /**
@@ -9,7 +11,11 @@ import TaskCenterCarousel from "./TaskCenterCarousel";
  * future backend work.
  */
 export default function TaskCenterSection() {
-  const activeTasks = rankTasksForHomepage(TASKS);
+  const resolvedTasks: ResolvedTask[] = TASKS.map((task) => ({
+    ...task,
+    rewardImageSrc: findPublicAsset(`home/quest/${task.id}`),
+  }));
+  const activeTasks = rankTasksForHomepage(resolvedTasks);
   if (activeTasks.length === 0) return null;
 
   return (
