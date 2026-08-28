@@ -99,7 +99,7 @@ export default function MenuExperience({
               className="flex items-center gap-1 text-sm text-ink underline-offset-2 hover:underline"
             >
               <MapPinIcon className="h-3.5 w-3.5 shrink-0 text-forest" />
-              298C Compassvale Street, Singapore 543298
+              298C Compassvale Street, 543298
             </a>
             <p className="mt-0.5 text-xs text-muted">Unit No: #15-80</p>
           </div>

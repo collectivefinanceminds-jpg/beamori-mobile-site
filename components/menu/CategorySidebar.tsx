@@ -54,7 +54,7 @@ export default function CategorySidebar({
                 aria-current={isActive ? "true" : undefined}
                 className={`relative flex w-full flex-col items-center gap-1.5 py-3 pl-0.5 text-center text-xs leading-tight transition-colors ${
                   isActive
-                    ? "bg-forest/8 font-semibold text-forest"
+                    ? "font-semibold text-forest"
                     : "font-medium text-muted"
                 }`}
               >
