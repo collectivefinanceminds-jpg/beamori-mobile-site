@@ -31,9 +31,8 @@ export const MENU_CATEGORIES: MenuCategory[] = [
   { id: "soda-spritz", name: "Soda Spritz", sortOrder: 8 },
 ];
 
-// Flat placeholder price across the menu — matches the existing $6.80
-// Matcha Latte price point in data/recommended.ts. Edit per-item once
-// real pricing is decided.
+// Flat placeholder price across the menu. Edit per-item once real
+// pricing is decided.
 const GENERAL_PRICE_CENTS = 680;
 
 // Bundle placeholder prices are scaled roughly to item count rather than

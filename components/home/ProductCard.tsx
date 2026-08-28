@@ -1,21 +1,22 @@
 import Image from "next/image";
+import Link from "next/link";
 import { formatSgd } from "@/lib/currency";
-import type { RecommendedProduct } from "@/data/recommended";
-import { findPublicAsset } from "@/lib/media";
+import type { MenuProduct } from "@/data/menu";
 
 export default function ProductCard({
   product,
 }: {
-  product: RecommendedProduct;
+  product: MenuProduct & { imageSrc: string | null };
 }) {
-  const imageSrc = findPublicAsset(`home/recommended/${product.slug}`);
-
   return (
-    <div className="aspect-square w-46.75 shrink-0 overflow-hidden rounded-card border border-hairline bg-surface flex flex-col">
+    <Link
+      href={`/menu/${product.id}`}
+      className="aspect-square w-46.75 shrink-0 overflow-hidden rounded-card border border-hairline bg-surface flex flex-col"
+    >
       <div className="relative w-full flex-1 bg-ivory">
-        {imageSrc ? (
+        {product.imageSrc ? (
           <Image
-            src={imageSrc}
+            src={product.imageSrc}
             alt={product.name}
             fill
             sizes="187px"
@@ -23,7 +24,7 @@ export default function ProductCard({
           />
         ) : (
           <div className="absolute inset-2 flex items-center justify-center rounded-lg border border-dashed border-hairline text-center text-[0.6875rem] text-muted">
-            public/home/recommended/{product.slug}.png
+            public/menu/{product.id}.png
           </div>
         )}
       </div>
@@ -43,6 +44,6 @@ export default function ProductCard({
           )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
