@@ -90,7 +90,7 @@ export default function MenuExperience({
           <h1 className="shrink-0 text-2xl font-bold text-ink">Pickup</h1>
           <MenuSearchBar value={query} onChange={setQuery} />
         </div>
-        <div className="mt-5 flex items-start justify-between gap-3">
+        <div className="mt-5 flex items-center justify-between gap-3">
           <div>
             <a
               href="https://maps.app.goo.gl/y7aJM9HSDr75GrSc6"
