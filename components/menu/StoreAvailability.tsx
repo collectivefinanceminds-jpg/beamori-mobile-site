@@ -44,11 +44,11 @@ export default function StoreAvailability() {
       <button
         type="button"
         onClick={() => setSheetOpen(true)}
-        className="flex flex-col items-center gap-1"
+        className="flex shrink-0 flex-col items-center gap-[0.167rem]"
         style={{ "--cta-size": "0.956rem" } as React.CSSProperties}
       >
         <span
-          className={`rounded-btn px-[0.667rem] py-[0.333rem] font-bold ${
+          className={`rounded-btn px-[0.445rem] py-[0.222rem] font-bold ${
             openNow ? "bg-forest/15 text-forest" : "bg-hairline text-muted"
           }`}
           style={{ fontSize: "var(--cta-size)" }}
@@ -60,7 +60,7 @@ export default function StoreAvailability() {
             changes again. */}
         <span
           className="text-muted underline underline-offset-2"
-          style={{ fontSize: "calc(var(--cta-size) * 0.65)" }}
+          style={{ fontSize: "calc(var(--cta-size) * 0.585)" }}
         >
           Check availability
         </span>
