@@ -12,13 +12,16 @@ import StoreAvailability from "./StoreAvailability";
 export default function MenuExperience({
   categories,
   products,
+  initialCategoryId,
 }: {
   categories: ResolvedMenuCategory[];
   products: ResolvedMenuProduct[];
+  /** e.g. deep-linked from a promo card via /menu?category=bundle-deals */
+  initialCategoryId?: string;
 }) {
   const [query, setQuery] = useState("");
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(
-    categories[0]?.id ?? null,
+    initialCategoryId ?? categories[0]?.id ?? null,
   );
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const suppressObserver = useRef(false);
@@ -82,6 +85,23 @@ export default function MenuExperience({
       suppressObserver.current = false;
     }, 700);
   };
+
+  // Deep-linked category (e.g. from a promo card): jump straight to it on
+  // first load instead of leaving the user to scroll from the top.
+  useEffect(() => {
+    if (!initialCategoryId) return;
+    const el = cardRefs.current.get(initialCategoryId);
+    if (!el) return;
+
+    suppressObserver.current = true;
+    el.scrollIntoView({ behavior: "auto", block: "start" });
+    window.setTimeout(() => {
+      suppressObserver.current = false;
+    }, 700);
+    // Intentionally runs once on mount only — this is an initial deep-link,
+    // not something that should re-trigger on later prop changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="pb-40">

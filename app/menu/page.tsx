@@ -6,7 +6,13 @@ import type {
   ResolvedMenuProduct,
 } from "@/components/menu/types";
 
-export default function MenuPage() {
+export default async function MenuPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+
   const resolvedProducts: ResolvedMenuProduct[] = MENU_PRODUCTS.map(
     (product) => ({
       ...product,
@@ -21,10 +27,17 @@ export default function MenuPage() {
     }),
   );
 
+  // Only honour the query param if it's a real category — otherwise fall
+  // back to MenuExperience's own default (the first category).
+  const initialCategoryId = resolvedCategories.some((c) => c.id === category)
+    ? category
+    : undefined;
+
   return (
     <MenuExperience
       categories={resolvedCategories}
       products={resolvedProducts}
+      initialCategoryId={initialCategoryId}
     />
   );
 }

@@ -7,7 +7,7 @@ export type Task = {
   requiredProgress: number;
   progressUnit: string;
   ctaLabel: string;
-  /** Path under public/, e.g. "home/tasks/order-5-drinks.png" — null until real artwork is supplied. */
+  /** Path under public/, e.g. "home/quest/order-5-drinks.png" — null until real artwork is supplied. */
   rewardImage: string | null;
   rewardName: string;
   status: TaskStatus;
