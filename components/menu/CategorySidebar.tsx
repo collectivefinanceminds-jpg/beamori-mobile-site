@@ -4,6 +4,11 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import type { ResolvedMenuCategory } from "./types";
 
+// Names that don't naturally wrap at the sidebar's width but should
+// still stack one word per line. Most multi-word names wrap on their
+// own via CSS; this is a narrow, explicit exception list.
+const FORCE_STACK_NAMES = new Set(["Bundle Deals"]);
+
 /**
  * Narrow, un-carded left nav — shares the page's own background so it
  * reads as part of the page rather than a floating panel. Auto-scrolls
@@ -47,19 +52,23 @@ export default function CategorySidebar({
                 type="button"
                 onClick={() => onSelect(category.id)}
                 aria-current={isActive ? "true" : undefined}
-                className={`flex w-full flex-col items-center gap-1.5 border-l-2 py-3 text-center text-xs leading-tight transition-colors ${
-                  isActive
-                    ? "border-forest font-semibold text-forest"
-                    : "border-transparent font-medium text-muted"
+                className={`relative flex w-full flex-col items-center gap-1.5 py-3 pl-0.5 text-center text-xs leading-tight transition-colors ${
+                  isActive ? "font-semibold text-forest" : "font-medium text-muted"
                 }`}
               >
-                <span className="flex h-12.25 w-12.25 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-ivory">
+                {isActive && (
+                  // Inset 20% from top and bottom (not a full-height
+                  // border) so the indicator reads as a marker next to
+                  // the selected item, not a divider spanning it.
+                  <span className="absolute top-[20%] bottom-[20%] left-0 w-0.5 rounded-full bg-forest" />
+                )}
+                <span className="flex h-11.25 w-11.25 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-ivory">
                   {category.iconSrc ? (
                     <Image
                       src={category.iconSrc}
                       alt=""
-                      width={49}
-                      height={49}
+                      width={45}
+                      height={45}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -69,7 +78,15 @@ export default function CategorySidebar({
                     />
                   )}
                 </span>
-                {category.name}
+                {FORCE_STACK_NAMES.has(category.name) ? (
+                  <span className="flex flex-col">
+                    {category.name.split(" ").map((word) => (
+                      <span key={word}>{word}</span>
+                    ))}
+                  </span>
+                ) : (
+                  category.name
+                )}
               </button>
             </li>
           );
