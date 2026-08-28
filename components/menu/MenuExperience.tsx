@@ -7,6 +7,7 @@ import CategorySidebar from "./CategorySidebar";
 import MenuCategoryCard from "./MenuCategoryCard";
 import { MapPinIcon } from "./MenuIcons";
 import MenuSearchBar from "./MenuSearchBar";
+import StoreAvailability from "./StoreAvailability";
 
 export default function MenuExperience({
   categories,
@@ -89,7 +90,7 @@ export default function MenuExperience({
           <h1 className="shrink-0 text-2xl font-bold text-ink">Pickup</h1>
           <MenuSearchBar value={query} onChange={setQuery} />
         </div>
-        <div className="mt-2">
+        <div className="mt-5">
           <a
             href="https://maps.app.goo.gl/y7aJM9HSDr75GrSc6"
             target="_blank"
@@ -101,6 +102,7 @@ export default function MenuExperience({
           </a>
           <p className="mt-0.5 text-xs text-muted">Unit No: #15-80</p>
         </div>
+        <StoreAvailability />
       </div>
 
       <div className="mt-4 flex items-start gap-3 px-gutter">

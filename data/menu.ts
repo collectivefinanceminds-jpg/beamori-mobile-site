@@ -17,14 +17,18 @@ export type MenuProduct = {
 
 // Cold Foam and matcha's milk choices are customisation options for a
 // future product-detail flow, not standalone browsable categories.
+//
+// Order: Bundle Deals first, Beamori Specials/Singapore Classics second,
+// Matcha third, everything else fourth (Snacks placed right after Matcha).
 export const MENU_CATEGORIES: MenuCategory[] = [
-  { id: "matcha", name: "Matcha", sortOrder: 1 },
-  { id: "tea", name: "Tea", sortOrder: 2 },
-  { id: "milk", name: "Milk", sortOrder: 3 },
-  { id: "soda-spritz", name: "Soda Spritz", sortOrder: 4 },
-  { id: "others", name: "Others", sortOrder: 5 },
-  { id: "beamori-specials", name: "Beamori Specials", sortOrder: 6 },
-  { id: "bundle-deals", name: "Bundle Deals", sortOrder: 7 },
+  { id: "bundle-deals", name: "Bundle Deals", sortOrder: 1 },
+  { id: "beamori-specials", name: "Beamori Specials", sortOrder: 2 },
+  { id: "singapore-classics", name: "Singapore Classics", sortOrder: 3 },
+  { id: "matcha", name: "Matcha", sortOrder: 4 },
+  { id: "snacks", name: "Snacks", sortOrder: 5 },
+  { id: "tea", name: "Tea", sortOrder: 6 },
+  { id: "milk", name: "Milk", sortOrder: 7 },
+  { id: "soda-spritz", name: "Soda Spritz", sortOrder: 8 },
 ];
 
 // Flat placeholder price across the menu — matches the existing $6.80
@@ -37,6 +41,7 @@ const GENERAL_PRICE_CENTS = 680;
 // worth the same as one drink — still just a placeholder, edit freely.
 const CHICKEN_POPPER_COMBO_PRICE_CENTS = 980;
 const BUDDY_COMBO_PRICE_CENTS = 1380;
+const CHICKEN_POPPERS_PRICE_CENTS = 480;
 
 export const MENU_PRODUCTS: MenuProduct[] = [
   {
@@ -122,9 +127,18 @@ export const MENU_PRODUCTS: MenuProduct[] = [
   {
     id: "milo-gao",
     name: "Milo Gao",
-    category: "others",
+    category: "singapore-classics",
     description: "Thick, chocolatey Milo, extra malty",
     priceCents: GENERAL_PRICE_CENTS,
+    available: true,
+  },
+  {
+    id: "chicken-poppers",
+    name: "Chicken Poppers",
+    category: "snacks",
+    description:
+      "Popcorn chicken seasoned with Beamori's own spicy umami seasoning blend (made with seaweed, sichuan peppercorns, citric acid, chicken powder, MSG, chilli powder, garlic and onion powder)",
+    priceCents: CHICKEN_POPPERS_PRICE_CENTS,
     available: true,
   },
   {

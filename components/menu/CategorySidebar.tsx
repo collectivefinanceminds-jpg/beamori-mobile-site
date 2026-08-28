@@ -69,7 +69,11 @@ export default function CategorySidebar({
                     />
                   )}
                 </span>
-                {category.name}
+                <span className="flex flex-col">
+                  {category.name.split(" ").map((word) => (
+                    <span key={word}>{word}</span>
+                  ))}
+                </span>
               </button>
             </li>
           );
