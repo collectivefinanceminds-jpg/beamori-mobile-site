@@ -111,8 +111,8 @@ export default function ProductDetail({
       <div className="mt-4">
         {/* Full-bleed — no px-gutter — spanning the entire site width,
             unlike every other card on this page. */}
-        <div className="rounded-[1.5rem] bg-surface px-8 py-4 text-center">
-          <div className="flex items-center justify-center gap-2">
+        <div className="rounded-[1.5rem] bg-surface px-8 py-4">
+          <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold text-ink">{product.name}</h1>
             {!product.available && (
               <span className="rounded-btn bg-hairline px-2.5 py-1 text-xs font-semibold text-muted">

@@ -11,9 +11,9 @@ export default function CustomisationGroup({
   onChange: (optionId: string) => void;
 }) {
   return (
-    <div className="text-center">
+    <div>
       <h3 className="text-sm font-semibold text-ink">{group.label}</h3>
-      <div className="mt-2 flex flex-wrap justify-center gap-2">
+      <div className="mt-2 flex flex-wrap gap-2">
         {group.options
           .filter((option) => option.available)
           .map((option) => {
