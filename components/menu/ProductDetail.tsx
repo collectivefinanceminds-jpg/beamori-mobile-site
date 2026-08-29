@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   computeUnitPriceCents,
   getDefaultSelectedOptionIds,
@@ -11,7 +12,7 @@ import AddOnCustomizeSheet from "./AddOnCustomizeSheet";
 import AddOnSection from "./AddOnSection";
 import AllergenAccordion from "./AllergenAccordion";
 import CloseButton from "./CloseButton";
-import CustomisationGroup from "./CustomisationGroup";
+import ProductCustomizationCard from "./ProductCustomizationCard";
 import ProductDescriptionCard from "./ProductDescriptionCard";
 import ProductHero from "./ProductHero";
 import StickyPurchaseBar from "./StickyPurchaseBar";
@@ -24,14 +25,13 @@ export default function ProductDetail({
   product: ResolvedMenuProduct;
   addOns: ResolvedMenuProduct[];
 }) {
+  const router = useRouter();
   const { addItem } = useCart();
-  const customisationGroups = product.customisationGroups ?? [];
 
   const [selectedOptionIdsByGroup, setSelectedOptionIdsByGroup] = useState(
     () => getDefaultSelectedOptionIds(product),
   );
   const [quantity, setQuantity] = useState(1);
-  const [justAdded, setJustAdded] = useState(false);
 
   // How many of each add-on this session has added to the cart via its own
   // customise sheet — drives the quantity badge on its tile.
@@ -54,7 +54,9 @@ export default function ProductDetail({
     product.available && hasRequiredSelections(product, selectedOptionIdsByGroup);
 
   const handleOptionChange = (groupId: string, optionId: string) => {
-    const group = customisationGroups.find((g) => g.id === groupId);
+    const group = (product.customisationGroups ?? []).find(
+      (g) => g.id === groupId,
+    );
     if (!group) return;
 
     setSelectedOptionIdsByGroup((previous) => {
@@ -79,8 +81,9 @@ export default function ProductDetail({
       unitPriceCents,
     });
 
-    setJustAdded(true);
-    window.setTimeout(() => setJustAdded(false), 1500);
+    // Return to wherever the customer was on the Menu (scroll position
+    // included) — same as the close button, since adding to cart is done.
+    router.back();
   };
 
   const handleAddOnConfirm = (input: {
@@ -101,6 +104,8 @@ export default function ProductDetail({
       ...previous,
       [activeAddOn.id]: (previous[activeAddOn.id] ?? 0) + input.quantity,
     }));
+    // Adding an add-on only closes its own sheet — the parent product's
+    // page stays open, unlike the parent's own Add to Cart above.
     setActiveAddOnId(null);
   };
 
@@ -114,35 +119,12 @@ export default function ProductDetail({
         <ProductHero product={product} />
       </div>
 
-      <div className="mt-4">
-        {/* Full-bleed — no px-gutter — spanning the entire site width,
-            unlike every other card on this page. */}
-        <div className="rounded-[1.5rem] bg-surface px-8 py-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-ink">{product.name}</h1>
-            {!product.available && (
-              <span className="rounded-btn bg-hairline px-2.5 py-1 text-xs font-semibold text-muted">
-                Sold Out
-              </span>
-            )}
-          </div>
-          {product.description && (
-            <p className="mt-2 text-sm text-muted">{product.description}</p>
-          )}
-
-          {customisationGroups.length > 0 && (
-            <div className="mt-6 flex flex-col gap-6">
-              {customisationGroups.map((group) => (
-                <CustomisationGroup
-                  key={group.id}
-                  group={group}
-                  selectedIds={selectedOptionIdsByGroup[group.id] ?? []}
-                  onChange={(optionId) => handleOptionChange(group.id, optionId)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+      <div className="px-gutter mt-4">
+        <ProductCustomizationCard
+          product={product}
+          selectedOptionIdsByGroup={selectedOptionIdsByGroup}
+          onOptionChange={handleOptionChange}
+        />
       </div>
 
       <div className="mt-6">
@@ -167,9 +149,7 @@ export default function ProductDetail({
         totalCents={totalCents}
         compareAtTotalCents={compareAtTotalCents}
         onAddToCart={handleAddToCart}
-        ctaLabel={
-          !product.available ? "Sold Out" : justAdded ? "Added ✓" : "Add to Cart"
-        }
+        ctaLabel={!product.available ? "Sold Out" : "Add to Cart"}
         ctaDisabled={!canAddToCart}
       />
 
