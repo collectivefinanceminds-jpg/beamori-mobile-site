@@ -26,23 +26,22 @@ export default function CustomisationGroup({
                 type="button"
                 onClick={() => onChange(option.id)}
                 aria-pressed={isSelected}
-                className={`flex flex-col items-center justify-center gap-0.5 rounded-lg border-2 px-6 py-1.5 text-center leading-tight transition-colors ${
+                className={`flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-lg border-2 px-6 py-1.5 text-center leading-tight transition-colors ${
                   isSelected
                     ? "border-forest bg-forest/10 font-semibold text-forest"
                     : "border-transparent bg-hairline font-medium text-ink"
                 }`}
               >
-                {/* Always two lines — the second is invisible (not absent)
-                    when there's no price adjustment, so every option button
-                    in a group is the same height regardless of content. */}
+                {/* min-h-11 (not a second, invisible line) keeps every
+                    button in a group the same height — so a single-line
+                    option's text is genuinely centered, not pushed up by
+                    reserved space for a price line it doesn't have. */}
                 <span className="text-[0.6875rem]">{option.label}</span>
-                <span
-                  className={`text-[0.625rem] text-muted ${hasPriceAdjustment ? "" : "invisible"}`}
-                >
-                  {hasPriceAdjustment
-                    ? `+${formatSgd(option.priceAdjustmentCents)}`
-                    : "+$0.00"}
-                </span>
+                {hasPriceAdjustment && (
+                  <span className="text-[0.625rem] text-muted">
+                    +{formatSgd(option.priceAdjustmentCents)}
+                  </span>
+                )}
               </button>
             );
           })}

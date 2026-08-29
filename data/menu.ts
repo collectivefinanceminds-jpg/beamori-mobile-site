@@ -18,10 +18,12 @@ export type CustomisationGroup = {
   required: boolean;
   selectionType: "single" | "multiple";
   /**
-   * Order is meaningful: the first available option is auto-selected when
-   * the product page opens, so put the intended default first. An
-   * opt-out-style option (None, No Sweet, No Ice, etc.) should always be
-   * listed last, never first.
+   * Order is meaningful — the first available option is auto-selected when
+   * the product page opens. Follow this hierarchy: the most common choice
+   * first, then a "None"-style opt-out option (if the group has one), then
+   * any other no-cost variants, and any option that costs extra
+   * ("requires a top-up") always last. This keeps the auto-selected
+   * default free, never a paid option.
    */
   options: CustomisationOption[];
 };
@@ -93,9 +95,9 @@ const SWEETNESS_GROUP: CustomisationGroup = {
   selectionType: "single",
   options: [
     { id: "regular", label: "Regular", priceAdjustmentCents: 0, available: true },
+    { id: "no-sweet", label: "No Sweet", priceAdjustmentCents: 0, available: true },
     { id: "more-sweet", label: "More Sweet", priceAdjustmentCents: 0, available: true },
     { id: "less-sweet", label: "Less Sweet", priceAdjustmentCents: 0, available: true },
-    { id: "no-sweet", label: "No Sweet", priceAdjustmentCents: 0, available: true },
   ],
 };
 
@@ -288,13 +290,13 @@ export const MENU_PRODUCTS: MenuProduct[] = [
         required: true,
         selectionType: "single",
         options: [
+          { id: "no-foam", label: "None", priceAdjustmentCents: 0, available: true },
           {
             id: "vanilla-foam",
             label: "Vanilla Cold Foam",
             priceAdjustmentCents: 100,
             available: true,
           },
-          { id: "no-foam", label: "None", priceAdjustmentCents: 0, available: true },
         ],
       },
     ],
