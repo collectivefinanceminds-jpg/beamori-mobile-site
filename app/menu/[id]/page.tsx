@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getProductById, type MenuProduct } from "@/data/menu";
 import { findPublicAsset } from "@/lib/media";
+import { getAddOnsForProduct } from "@/lib/menu";
 import ProductDetail from "@/components/menu/ProductDetail";
 import type { ResolvedMenuProduct } from "@/components/menu/types";
 
@@ -17,10 +18,7 @@ export default async function ProductDetailPage({
   const product = getProductById(id);
   if (!product) notFound();
 
-  const addOns = (product.recommendedAddOnIds ?? [])
-    .map((addOnId) => getProductById(addOnId))
-    .filter((addOn): addOn is MenuProduct => Boolean(addOn))
-    .map(resolveImage);
+  const addOns = getAddOnsForProduct(product).map(resolveImage);
 
   return <ProductDetail product={resolveImage(product)} addOns={addOns} />;
 }

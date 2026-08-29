@@ -1,4 +1,9 @@
-import { MENU_PRODUCTS, type MenuCategory, type MenuProduct } from "@/data/menu";
+import {
+  getProductById,
+  MENU_PRODUCTS,
+  type MenuCategory,
+  type MenuProduct,
+} from "@/data/menu";
 
 /**
  * Default-selected option ids per group, keyed by group id — the initial
@@ -43,6 +48,60 @@ export function hasRequiredSelections(
   return (product.customisationGroups ?? [])
     .filter((group) => group.required)
     .every((group) => (selectedOptionIdsByGroup[group.id] ?? []).length > 0);
+}
+
+/**
+ * Add-ons for a product's page, always filled up to `limit` when the
+ * catalog has enough available products. Starts with the product's own
+ * curated `recommendedAddOnIds`, then backfills from other available items
+ * — same category first, then anywhere else — rather than ever leaving the
+ * section short or empty.
+ */
+export function getAddOnsForProduct(
+  product: MenuProduct,
+  limit = 3,
+): MenuProduct[] {
+  const explicit = (product.recommendedAddOnIds ?? [])
+    .map((id) => getProductById(id))
+    .filter(
+      (candidate): candidate is MenuProduct =>
+        candidate !== undefined &&
+        candidate.id !== product.id &&
+        candidate.available,
+    );
+
+  const result: MenuProduct[] = [...explicit];
+  const chosenIds = new Set(result.map((item) => item.id));
+
+  const addUntilFull = (candidates: MenuProduct[]) => {
+    for (const candidate of candidates) {
+      if (result.length >= limit) return;
+      if (chosenIds.has(candidate.id)) continue;
+      result.push(candidate);
+      chosenIds.add(candidate.id);
+    }
+  };
+
+  if (result.length < limit) {
+    addUntilFull(
+      MENU_PRODUCTS.filter(
+        (candidate) =>
+          candidate.category === product.category &&
+          candidate.available &&
+          candidate.id !== product.id,
+      ),
+    );
+  }
+
+  if (result.length < limit) {
+    addUntilFull(
+      MENU_PRODUCTS.filter(
+        (candidate) => candidate.available && candidate.id !== product.id,
+      ),
+    );
+  }
+
+  return result.slice(0, limit);
 }
 
 // Categories pulled for the homepage "Recommend for You" carousel, in
