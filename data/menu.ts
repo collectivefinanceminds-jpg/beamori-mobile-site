@@ -289,12 +289,6 @@ export const MENU_PRODUCTS: MenuProduct[] = [
         selectionType: "single",
         options: [
           {
-            id: "earl-grey-sea-salt-foam",
-            label: "Earl Grey Sea Salt Cold Foam",
-            priceAdjustmentCents: 0,
-            available: true,
-          },
-          {
             id: "vanilla-foam",
             label: "Vanilla Cold Foam",
             priceAdjustmentCents: 100,

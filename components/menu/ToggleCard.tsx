@@ -21,16 +21,16 @@ export default function ToggleCard({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-card bg-surface p-4">
+    <div className="rounded-card bg-surface px-8 py-4 text-center">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between text-left"
+        className="relative flex w-full items-center justify-center"
       >
         <span className="text-sm font-semibold text-ink">{title}</span>
         <ChevronDownIcon
-          className={`h-4 w-4 shrink-0 text-muted transition-transform ${open ? "rotate-180" : ""}`}
+          className={`absolute right-0 h-4 w-4 shrink-0 text-muted transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
 
