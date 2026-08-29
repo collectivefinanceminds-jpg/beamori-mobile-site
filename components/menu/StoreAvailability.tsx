@@ -48,7 +48,7 @@ export default function StoreAvailability() {
         style={{ "--cta-size": "0.956rem" } as React.CSSProperties}
       >
         <span
-          className={`rounded-btn px-[0.445rem] py-[0.222rem] font-bold ${
+          className={`rounded-btn px-[0.4895rem] py-[0.222rem] font-bold ${
             openNow ? "bg-forest/15 text-forest" : "bg-hairline text-muted"
           }`}
           style={{ fontSize: "var(--cta-size)" }}
