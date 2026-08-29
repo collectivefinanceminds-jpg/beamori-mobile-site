@@ -9,6 +9,7 @@ import {
   hasRequiredSelections,
 } from "@/lib/menu";
 import AllergenAccordion from "./AllergenAccordion";
+import { CheckIcon } from "./MenuIcons";
 import ProductCustomizationCard from "./ProductCustomizationCard";
 import ProductDescriptionCard from "./ProductDescriptionCard";
 import ProductHero from "./ProductHero";
@@ -141,11 +142,16 @@ export default function AddOnCustomizeSheet({
           compareAtTotalCents={compareAtTotalCents}
           onAddToCart={handleConfirm}
           ctaLabel={
-            !addOn.available
-              ? "Sold Out"
-              : justAdded
-                ? "Added to Cart"
-                : "Add to Cart"
+            !addOn.available ? (
+              "Sold Out"
+            ) : justAdded ? (
+              <span className="flex items-center justify-center gap-1.5">
+                Added to Cart
+                <CheckIcon className="h-5 w-5" strokeWidth={3} />
+              </span>
+            ) : (
+              "Add to Cart"
+            )
           }
           ctaDisabled={!canConfirm}
         />

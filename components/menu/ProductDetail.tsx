@@ -12,6 +12,7 @@ import AddOnCustomizeSheet from "./AddOnCustomizeSheet";
 import AddOnSection from "./AddOnSection";
 import AllergenAccordion from "./AllergenAccordion";
 import CloseButton from "./CloseButton";
+import { CheckIcon } from "./MenuIcons";
 import ProductCustomizationCard from "./ProductCustomizationCard";
 import ProductDescriptionCard from "./ProductDescriptionCard";
 import ProductHero from "./ProductHero";
@@ -158,11 +159,16 @@ export default function ProductDetail({
         compareAtTotalCents={compareAtTotalCents}
         onAddToCart={handleAddToCart}
         ctaLabel={
-          !product.available
-            ? "Sold Out"
-            : justAdded
-              ? "Added to Cart"
-              : "Add to Cart"
+          !product.available ? (
+            "Sold Out"
+          ) : justAdded ? (
+            <span className="flex items-center justify-center gap-1.5">
+              Added to Cart
+              <CheckIcon className="h-5 w-5" strokeWidth={3} />
+            </span>
+          ) : (
+            "Add to Cart"
+          )
         }
         ctaDisabled={!canAddToCart}
       />

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { formatSgd } from "@/lib/currency";
 
 export default function StickyPurchaseBar({
@@ -16,7 +17,7 @@ export default function StickyPurchaseBar({
   totalCents: number;
   compareAtTotalCents?: number;
   onAddToCart: () => void;
-  ctaLabel: string;
+  ctaLabel: ReactNode;
   ctaDisabled: boolean;
 }) {
   return (
