@@ -132,6 +132,22 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     available: true,
   },
   {
+    id: "kopi",
+    name: "Kopi",
+    category: "singapore-classics",
+    description: "Traditional local coffee with condensed milk",
+    priceCents: GENERAL_PRICE_CENTS,
+    available: true,
+  },
+  {
+    id: "kopi-o",
+    name: "Kopi-O",
+    category: "singapore-classics",
+    description: "Black coffee sweetened with sugar, no milk",
+    priceCents: GENERAL_PRICE_CENTS,
+    available: true,
+  },
+  {
     id: "chicken-poppers",
     name: "Chicken Poppers",
     category: "snacks",
