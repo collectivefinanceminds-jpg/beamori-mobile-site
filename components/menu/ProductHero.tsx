@@ -1,13 +1,17 @@
 import Image from "next/image";
 import type { ResolvedMenuProduct } from "./types";
 
+/**
+ * Its own section — just px-gutter margin, same width convention as the
+ * homepage's Recommended-for-You cards, not nested inside another card.
+ */
 export default function ProductHero({
   product,
 }: {
   product: ResolvedMenuProduct;
 }) {
   return (
-    <>
+    <div className="px-gutter">
       <div className="relative aspect-square w-full overflow-hidden rounded-card bg-ivory">
         {product.imageSrc ? (
           <Image
@@ -32,6 +36,10 @@ export default function ProductHero({
           </span>
         )}
       </div>
-    </>
+
+      {product.description && (
+        <p className="mt-2 text-sm text-muted">{product.description}</p>
+      )}
+    </div>
   );
 }

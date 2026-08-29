@@ -1,13 +1,18 @@
 import { MENU_PRODUCTS, type MenuCategory, type MenuProduct } from "@/data/menu";
 
-/** Default-selected option ids per group, keyed by group id — the initial state for a product page. */
+/**
+ * Default-selected option ids per group, keyed by group id — the initial
+ * state for a product page. The first available option in each group is
+ * the default (see the ordering note on CustomisationGroup.options), not a
+ * separately-flagged option.
+ */
 export function getDefaultSelectedOptionIds(
   product: MenuProduct,
 ): Record<string, string[]> {
   const selections: Record<string, string[]> = {};
   for (const group of product.customisationGroups ?? []) {
-    const defaults = group.options.filter((option) => option.default);
-    selections[group.id] = defaults.map((option) => option.id);
+    const firstAvailable = group.options.find((option) => option.available);
+    selections[group.id] = firstAvailable ? [firstAvailable.id] : [];
   }
   return selections;
 }

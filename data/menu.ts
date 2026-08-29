@@ -9,7 +9,6 @@ export type CustomisationOption = {
   label: string;
   /** In cents, added to the base price when this option is selected. */
   priceAdjustmentCents: number;
-  default?: boolean;
   available: boolean;
 };
 
@@ -18,6 +17,12 @@ export type CustomisationGroup = {
   label: string;
   required: boolean;
   selectionType: "single" | "multiple";
+  /**
+   * Order is meaningful: the first available option is auto-selected when
+   * the product page opens, so put the intended default first. An
+   * opt-out-style option (None, No Sweet, No Ice, etc.) should always be
+   * listed last, never first.
+   */
   options: CustomisationOption[];
 };
 
@@ -75,7 +80,7 @@ const SIZE_GROUP: CustomisationGroup = {
   required: true,
   selectionType: "single",
   options: [
-    { id: "regular", label: "Regular", priceAdjustmentCents: 0, default: true, available: true },
+    { id: "regular", label: "Regular", priceAdjustmentCents: 0, available: true },
     // Placeholder upcharge — edit once real Large pricing is decided.
     { id: "large", label: "Large", priceAdjustmentCents: 100, available: true },
   ],
@@ -87,8 +92,8 @@ const SWEETNESS_GROUP: CustomisationGroup = {
   required: true,
   selectionType: "single",
   options: [
+    { id: "regular", label: "Regular", priceAdjustmentCents: 0, available: true },
     { id: "more-sweet", label: "More Sweet", priceAdjustmentCents: 0, available: true },
-    { id: "regular", label: "Regular", priceAdjustmentCents: 0, default: true, available: true },
     { id: "less-sweet", label: "Less Sweet", priceAdjustmentCents: 0, available: true },
     { id: "no-sweet", label: "No Sweet", priceAdjustmentCents: 0, available: true },
   ],
@@ -267,15 +272,14 @@ export const MENU_PRODUCTS: MenuProduct[] = [
         required: true,
         selectionType: "single",
         options: [
-          { id: "regular-milk", label: "Regular Milk", priceAdjustmentCents: 0, available: true },
-          { id: "oat-milk", label: "Oat Milk", priceAdjustmentCents: 50, available: true },
           {
             id: "earl-grey-milk",
             label: "Earl Grey Milk",
             priceAdjustmentCents: 0,
-            default: true,
             available: true,
           },
+          { id: "regular-milk", label: "Regular Milk", priceAdjustmentCents: 0, available: true },
+          { id: "oat-milk", label: "Oat Milk", priceAdjustmentCents: 50, available: true },
         ],
       },
       {
@@ -284,12 +288,10 @@ export const MENU_PRODUCTS: MenuProduct[] = [
         required: true,
         selectionType: "single",
         options: [
-          { id: "no-foam", label: "None", priceAdjustmentCents: 0, available: true },
           {
             id: "earl-grey-sea-salt-foam",
             label: "Earl Grey Sea Salt Cold Foam",
             priceAdjustmentCents: 0,
-            default: true,
             available: true,
           },
           {
@@ -298,6 +300,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
             priceAdjustmentCents: 100,
             available: true,
           },
+          { id: "no-foam", label: "None", priceAdjustmentCents: 0, available: true },
         ],
       },
     ],

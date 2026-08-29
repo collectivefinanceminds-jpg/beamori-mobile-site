@@ -18,23 +18,29 @@ export default function CustomisationGroup({
           .filter((option) => option.available)
           .map((option) => {
             const isSelected = selectedIds.includes(option.id);
+            const hasPriceAdjustment = option.priceAdjustmentCents > 0;
+
             return (
               <button
                 key={option.id}
                 type="button"
                 onClick={() => onChange(option.id)}
                 aria-pressed={isSelected}
-                className={`rounded-btn border-2 px-4 py-2.5 text-sm transition-colors ${
+                className={`rounded-md border-2 px-3 py-2 text-xs transition-colors ${
                   isSelected
                     ? "border-forest bg-forest/10 font-semibold text-forest"
                     : "border-transparent bg-hairline font-medium text-ink"
                 }`}
               >
-                {option.label}
-                {option.priceAdjustmentCents > 0 && (
-                  <span className="ml-1.5 text-xs text-muted">
-                    +{formatSgd(option.priceAdjustmentCents)}
+                {hasPriceAdjustment ? (
+                  <span className="flex flex-col items-center text-center">
+                    <span>{option.label}</span>
+                    <span className="text-[0.6875rem] text-muted">
+                      +{formatSgd(option.priceAdjustmentCents)}
+                    </span>
                   </span>
+                ) : (
+                  option.label
                 )}
               </button>
             );

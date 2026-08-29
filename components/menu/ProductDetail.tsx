@@ -104,16 +104,16 @@ export default function ProductDetail({
         <CloseButton />
       </div>
 
-      <div className="px-gutter mt-3">
-        <div className="rounded-card bg-surface p-4">
-          <ProductHero product={product} />
+      <div className="mt-3">
+        <ProductHero product={product} />
+      </div>
 
-          {product.description && (
-            <p className="mt-2 text-sm text-muted">{product.description}</p>
-          )}
-
-          {customisationGroups.length > 0 && (
-            <div className="mt-6 flex flex-col gap-6">
+      {customisationGroups.length > 0 && (
+        <div className="px-gutter mt-4">
+          {/* Sits right below the hero, rounded top corners forming the
+              visible seam between the two sections. */}
+          <div className="rounded-card bg-surface p-4">
+            <div className="flex flex-col gap-6">
               {customisationGroups.map((group) => (
                 <CustomisationGroup
                   key={group.id}
@@ -123,9 +123,9 @@ export default function ProductDetail({
                 />
               ))}
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="mt-6">
         <AddOnSection

@@ -16,7 +16,7 @@ export default function AddOnSection({
 
   return (
     <section>
-      <h2 className="px-gutter text-sm font-semibold text-ink">Add-ons</h2>
+      <h2 className="px-gutter text-lg font-semibold text-ink">Add-ons</h2>
       <div className="px-gutter mt-2 flex gap-3 overflow-x-auto pb-1 scrollbar-none [&::-webkit-scrollbar]:hidden">
         {addOns.map((addOn) => {
           const isSelected = selectedIds.includes(addOn.id);
