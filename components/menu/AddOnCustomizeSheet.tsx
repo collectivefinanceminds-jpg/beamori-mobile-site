@@ -60,14 +60,15 @@ export default function AddOnCustomizeSheet({
     addOn.available && hasRequiredSelections(addOn, selectedOptionIdsByGroup);
 
   const handleConfirm = () => {
-    if (!canConfirm || justAdded) return;
+    if (!canConfirm) return;
 
     onConfirm({ quantity, selectedOptionIdsByGroup, unitPriceCents });
 
     // Show "Added to Cart" on the button for a beat before the sheet
-    // closes, same as the parent product's own Add to Cart.
+    // closes, same as the parent product's own Add to Cart. Not disabled
+    // — the button stays responsive the whole time.
     setJustAdded(true);
-    window.setTimeout(onClose, 1000);
+    window.setTimeout(onClose, 500);
   };
 
   const handleOptionChange = (groupId: string, optionId: string) => {
@@ -146,7 +147,7 @@ export default function AddOnCustomizeSheet({
                 ? "Added to Cart"
                 : "Add to Cart"
           }
-          ctaDisabled={!canConfirm || justAdded}
+          ctaDisabled={!canConfirm}
         />
       </div>
     </>,

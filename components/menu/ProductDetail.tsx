@@ -73,7 +73,7 @@ export default function ProductDetail({
   };
 
   const handleAddToCart = () => {
-    if (!canAddToCart || justAdded) return;
+    if (!canAddToCart) return;
 
     addItem({
       productId: product.id,
@@ -83,13 +83,14 @@ export default function ProductDetail({
     });
 
     // Show "Added to Cart" on the button for a beat before leaving, so the
-    // confirmation is visible before the page closes.
+    // confirmation is visible before the page closes. Not disabled — the
+    // button stays responsive the whole time.
     setJustAdded(true);
     window.setTimeout(() => {
       // Return to wherever the customer was on the Menu (scroll position
       // included) — same as the close button, since adding to cart is done.
       router.back();
-    }, 1000);
+    }, 500);
   };
 
   const handleAddOnConfirm = (input: {
@@ -163,7 +164,7 @@ export default function ProductDetail({
               ? "Added to Cart"
               : "Add to Cart"
         }
-        ctaDisabled={!canAddToCart || justAdded}
+        ctaDisabled={!canAddToCart}
       />
 
       {activeAddOn && (
