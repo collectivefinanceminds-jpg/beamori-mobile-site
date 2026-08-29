@@ -2,8 +2,9 @@ import Image from "next/image";
 import type { ResolvedMenuProduct } from "./types";
 
 /**
- * Its own section — just px-gutter margin, same width convention as the
- * homepage's Recommended-for-You cards, not nested inside another card.
+ * Image only — name and short description now live in the customisation
+ * card below. Own section, px-gutter margin, same width convention as the
+ * homepage's Recommended-for-You cards.
  */
 export default function ProductHero({
   product,
@@ -27,19 +28,6 @@ export default function ProductHero({
           </div>
         )}
       </div>
-
-      <div className="mt-4 flex items-center gap-2">
-        <h1 className="text-2xl font-bold text-ink">{product.name}</h1>
-        {!product.available && (
-          <span className="rounded-btn bg-hairline px-2.5 py-1 text-xs font-semibold text-muted">
-            Sold Out
-          </span>
-        )}
-      </div>
-
-      {product.description && (
-        <p className="mt-2 text-sm text-muted">{product.description}</p>
-      )}
     </div>
   );
 }

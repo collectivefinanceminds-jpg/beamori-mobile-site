@@ -108,12 +108,24 @@ export default function ProductDetail({
         <ProductHero product={product} />
       </div>
 
-      {customisationGroups.length > 0 && (
-        <div className="px-gutter mt-4">
-          {/* Sits right below the hero, rounded top corners forming the
-              visible seam between the two sections. */}
-          <div className="rounded-card bg-surface p-4">
-            <div className="flex flex-col gap-6">
+      <div className="mt-4">
+        {/* Full-bleed — no px-gutter — spanning the entire site width,
+            unlike every other card on this page. */}
+        <div className="rounded-[1.5rem] bg-surface p-4">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-ink">{product.name}</h1>
+            {!product.available && (
+              <span className="rounded-btn bg-hairline px-2.5 py-1 text-xs font-semibold text-muted">
+                Sold Out
+              </span>
+            )}
+          </div>
+          {product.description && (
+            <p className="mt-2 text-sm text-muted">{product.description}</p>
+          )}
+
+          {customisationGroups.length > 0 && (
+            <div className="mt-6 flex flex-col gap-6">
               {customisationGroups.map((group) => (
                 <CustomisationGroup
                   key={group.id}
@@ -123,9 +135,9 @@ export default function ProductDetail({
                 />
               ))}
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
 
       <div className="mt-6">
         <AddOnSection
