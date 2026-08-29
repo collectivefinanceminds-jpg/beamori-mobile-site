@@ -104,22 +104,28 @@ export default function ProductDetail({
         <CloseButton />
       </div>
 
-      <div className="mt-3">
-        <ProductHero product={product} />
-      </div>
+      <div className="px-gutter mt-3">
+        <div className="rounded-card bg-surface p-4">
+          <ProductHero product={product} />
 
-      {customisationGroups.length > 0 && (
-        <div className="px-gutter mt-6 flex flex-col gap-6">
-          {customisationGroups.map((group) => (
-            <CustomisationGroup
-              key={group.id}
-              group={group}
-              selectedIds={selectedOptionIdsByGroup[group.id] ?? []}
-              onChange={(optionId) => handleOptionChange(group.id, optionId)}
-            />
-          ))}
+          {product.description && (
+            <p className="mt-2 text-sm text-muted">{product.description}</p>
+          )}
+
+          {customisationGroups.length > 0 && (
+            <div className="mt-6 flex flex-col gap-6">
+              {customisationGroups.map((group) => (
+                <CustomisationGroup
+                  key={group.id}
+                  group={group}
+                  selectedIds={selectedOptionIdsByGroup[group.id] ?? []}
+                  onChange={(optionId) => handleOptionChange(group.id, optionId)}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       <div className="mt-6">
         <AddOnSection

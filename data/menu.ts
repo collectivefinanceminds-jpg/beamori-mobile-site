@@ -65,19 +65,36 @@ const CHICKEN_POPPER_COMBO_PRICE_CENTS = 980;
 const BUDDY_COMBO_PRICE_CENTS = 1380;
 const CHICKEN_POPPERS_PRICE_CENTS = 480;
 
-// Shared by every drink — every drink can be ordered at a chosen sweetness,
-// no drink-specific exceptions exist yet.
+// Every product gets Size and Sweetness — the two universal groups. The
+// admin tooling planned for later is what will let specific drinks swap
+// these out or add their own one-off options; for now every product shares
+// the same two group definitions.
+const SIZE_GROUP: CustomisationGroup = {
+  id: "size",
+  label: "Size",
+  required: true,
+  selectionType: "single",
+  options: [
+    { id: "regular", label: "Regular", priceAdjustmentCents: 0, default: true, available: true },
+    // Placeholder upcharge — edit once real Large pricing is decided.
+    { id: "large", label: "Large", priceAdjustmentCents: 100, available: true },
+  ],
+};
+
 const SWEETNESS_GROUP: CustomisationGroup = {
   id: "sweetness",
   label: "Sweetness",
   required: true,
   selectionType: "single",
   options: [
+    { id: "more-sweet", label: "More Sweet", priceAdjustmentCents: 0, available: true },
     { id: "regular", label: "Regular", priceAdjustmentCents: 0, default: true, available: true },
     { id: "less-sweet", label: "Less Sweet", priceAdjustmentCents: 0, available: true },
-    { id: "least-sweet", label: "Least Sweet", priceAdjustmentCents: 0, available: true },
+    { id: "no-sweet", label: "No Sweet", priceAdjustmentCents: 0, available: true },
   ],
 };
+
+const STANDARD_GROUPS: CustomisationGroup[] = [SIZE_GROUP, SWEETNESS_GROUP];
 
 // Chicken Poppers is the only snack today, so it's the one add-on every
 // drink can suggest — not a random pick.
@@ -94,7 +111,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     allergens: ["Milk"],
-    customisationGroups: [SWEETNESS_GROUP],
+    customisationGroups: STANDARD_GROUPS,
     recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
@@ -107,7 +124,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     allergens: ["Milk"],
-    customisationGroups: [SWEETNESS_GROUP],
+    customisationGroups: STANDARD_GROUPS,
     recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
@@ -120,7 +137,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     allergens: ["Milk"],
-    customisationGroups: [SWEETNESS_GROUP],
+    customisationGroups: STANDARD_GROUPS,
     recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
@@ -133,7 +150,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     allergens: [],
-    customisationGroups: [SWEETNESS_GROUP],
+    customisationGroups: STANDARD_GROUPS,
     recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
@@ -146,7 +163,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     allergens: ["Milk"],
-    customisationGroups: [SWEETNESS_GROUP],
+    customisationGroups: STANDARD_GROUPS,
     recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
@@ -159,7 +176,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     allergens: ["Milk"],
-    customisationGroups: [SWEETNESS_GROUP],
+    customisationGroups: STANDARD_GROUPS,
     recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
@@ -172,7 +189,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     allergens: ["Milk"],
-    customisationGroups: [SWEETNESS_GROUP],
+    customisationGroups: STANDARD_GROUPS,
     recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
@@ -185,7 +202,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     allergens: [],
-    customisationGroups: [SWEETNESS_GROUP],
+    customisationGroups: STANDARD_GROUPS,
     recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
@@ -199,6 +216,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: CHICKEN_POPPERS_PRICE_CENTS,
     available: true,
     allergens: ["Gluten", "Soy"],
+    customisationGroups: STANDARD_GROUPS,
   },
   {
     id: "mango-sticky-rice-matcha",
@@ -212,7 +230,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     available: true,
     limitedTime: true,
     allergens: ["Milk"],
-    customisationGroups: [SWEETNESS_GROUP],
+    customisationGroups: STANDARD_GROUPS,
     recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
@@ -227,7 +245,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     available: true,
     limitedTime: true,
     allergens: ["Milk"],
-    customisationGroups: [SWEETNESS_GROUP],
+    customisationGroups: STANDARD_GROUPS,
     recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
@@ -242,7 +260,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     available: true,
     allergens: ["Milk"],
     customisationGroups: [
-      SWEETNESS_GROUP,
+      ...STANDARD_GROUPS,
       {
         id: "milk",
         label: "Milk",
@@ -295,6 +313,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: CHICKEN_POPPER_COMBO_PRICE_CENTS,
     available: true,
     allergens: ["Milk", "Gluten", "Soy"],
+    customisationGroups: STANDARD_GROUPS,
   },
   {
     id: "buddy-combo",
@@ -306,6 +325,7 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: BUDDY_COMBO_PRICE_CENTS,
     available: true,
     allergens: ["Milk", "Gluten", "Soy"],
+    customisationGroups: STANDARD_GROUPS,
   },
 ];
 

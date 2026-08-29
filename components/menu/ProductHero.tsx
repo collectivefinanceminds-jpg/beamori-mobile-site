@@ -7,7 +7,7 @@ export default function ProductHero({
   product: ResolvedMenuProduct;
 }) {
   return (
-    <div className="px-gutter">
+    <>
       <div className="relative aspect-square w-full overflow-hidden rounded-card bg-ivory">
         {product.imageSrc ? (
           <Image
@@ -32,6 +32,6 @@ export default function ProductHero({
           </span>
         )}
       </div>
-    </div>
+    </>
   );
 }

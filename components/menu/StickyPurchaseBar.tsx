@@ -20,7 +20,7 @@ export default function StickyPurchaseBar({
   ctaDisabled: boolean;
 }) {
   return (
-    <div className="pb-safe fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 border-t border-hairline bg-surface px-gutter pt-3">
+    <div className="pb-safe fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 rounded-t-card border-t border-hairline bg-surface px-gutter pt-3 shadow-card">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
