@@ -73,10 +73,12 @@ const CHICKEN_POPPER_COMBO_PRICE_CENTS = 980;
 const BUDDY_COMBO_PRICE_CENTS = 1380;
 const CHICKEN_POPPERS_PRICE_CENTS = 480;
 
-// Every product gets Size and Sweetness — the two universal groups. The
-// admin tooling planned for later is what will let specific drinks swap
-// these out or add their own one-off options; for now every product shares
-// the same two group definitions.
+// Every drink gets Size and Sweetness — the two universal drink groups.
+// Food/snack items use a different Size scale entirely (see
+// buildFoodSizeGroup below) and have no Sweetness at all. The admin
+// tooling planned for later is what will let specific products swap
+// these out or add their own one-off options; for now drinks share the
+// same two group definitions.
 const SIZE_GROUP: CustomisationGroup = {
   id: "size",
   label: "Size",
@@ -101,6 +103,23 @@ const SWEETNESS_GROUP: CustomisationGroup = {
     { id: "no-sweet", label: "No Sweet", priceAdjustmentCents: 0, available: true },
   ],
 };
+
+// Food/snack Size is Regular/Upsize, not Regular/Large — and unlike
+// drinks, the Upsize price isn't shared across items (one food's upsize
+// might cost more than another's), so this is a factory each food
+// product calls with its own price, not a single shared constant.
+function buildFoodSizeGroup(upsizePriceCents: number): CustomisationGroup {
+  return {
+    id: "size",
+    label: "Size",
+    required: true,
+    selectionType: "single",
+    options: [
+      { id: "regular", label: "Regular", priceAdjustmentCents: 0, available: true },
+      { id: "upsize", label: "Upsize", priceAdjustmentCents: upsizePriceCents, available: true },
+    ],
+  };
+}
 
 const STANDARD_GROUPS: CustomisationGroup[] = [SIZE_GROUP, SWEETNESS_GROUP];
 
@@ -224,7 +243,8 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     priceCents: CHICKEN_POPPERS_PRICE_CENTS,
     available: true,
     allergens: ["Gluten", "Soy"],
-    customisationGroups: STANDARD_GROUPS,
+    // +$2.00 to upsize — placeholder amount, edit freely.
+    customisationGroups: [buildFoodSizeGroup(200)],
   },
   {
     id: "mango-sticky-rice-matcha",
