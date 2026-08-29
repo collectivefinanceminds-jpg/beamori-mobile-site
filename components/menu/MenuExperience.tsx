@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { searchProducts } from "@/lib/menu";
+import PickupLocationRow from "@/components/checkout/PickupLocationRow";
 import type { ResolvedMenuCategory, ResolvedMenuProduct } from "./types";
 import CategorySidebar from "./CategorySidebar";
 import MenuCategoryCard from "./MenuCategoryCard";
-import { MapPinIcon } from "./MenuIcons";
 import MenuSearchBar from "./MenuSearchBar";
 import StoreAvailability from "./StoreAvailability";
 
@@ -110,20 +110,8 @@ export default function MenuExperience({
           <h1 className="shrink-0 text-2xl font-bold text-ink">Pickup</h1>
           <MenuSearchBar value={query} onChange={setQuery} />
         </div>
-        <div className="mt-5 flex items-center justify-between gap-3">
-          <div>
-            <a
-              href="https://maps.app.goo.gl/y7aJM9HSDr75GrSc6"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-sm text-ink underline-offset-2 hover:underline"
-            >
-              <MapPinIcon className="h-3.5 w-3.5 shrink-0 text-forest" />
-              298C Compassvale Street, 543298
-            </a>
-            <p className="mt-0.5 text-xs text-muted">Unit No: #15-80</p>
-          </div>
-          <StoreAvailability />
+        <div className="mt-5">
+          <PickupLocationRow trailing={<StoreAvailability />} />
         </div>
       </div>
 

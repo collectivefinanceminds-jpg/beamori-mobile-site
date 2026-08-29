@@ -3,22 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { formatSgd } from "@/lib/currency";
-import { isProductDetailRoute } from "@/lib/nav";
+import { isNavHiddenRoute } from "@/lib/nav";
 import { useCart } from "./CartContext";
 import { CartIcon } from "./MenuIcons";
 
 /**
  * Fixed, column-width wrapper (same technique as BottomNav) so the pill/bar
  * aligns with the centered phone column at any viewport width, sitting
- * just above the persistent bottom nav. Hidden on product detail pages,
- * where the sticky purchase bar already owns that space and BottomNav
- * itself is hidden too (see AppShell).
+ * just above the persistent bottom nav. Hidden on routes with their own
+ * sticky bottom bar (see lib/nav.ts) — same list BottomNav itself hides on.
  */
 export default function CartOverlay() {
   const pathname = usePathname();
   const { items, totalItems } = useCart();
 
-  if (isProductDetailRoute(pathname)) return null;
+  if (isNavHiddenRoute(pathname)) return null;
 
   const totalCents = items.reduce(
     (sum, item) => sum + item.unitPriceCents * item.quantity,
@@ -35,7 +34,7 @@ export default function CartOverlay() {
         </div>
       ) : (
         <Link
-          href="/cart"
+          href="/checkout"
           className="rounded-btn pointer-events-auto flex items-center justify-between bg-forest px-5 py-3.5 text-white shadow-card"
         >
           <span className="flex items-center gap-2 text-sm font-semibold">

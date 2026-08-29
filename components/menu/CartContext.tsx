@@ -23,6 +23,7 @@ type AddItemInput = {
 type CartContextValue = {
   items: CartItem[];
   addItem: (input: AddItemInput) => void;
+  removeItem: (cartItemId: string) => void;
   totalItems: number;
 };
 
@@ -46,9 +47,9 @@ function buildCartItemId(
 }
 
 /**
- * In-memory only, scoped to the /menu route tree (see app/menu/layout.tsx)
- * — no persistence yet. A natural next step once checkout exists is
- * localStorage or a Supabase-backed cart.
+ * In-memory only, app-wide (mounted in app/layout.tsx so /menu, /checkout,
+ * etc. all share one cart instance) — no persistence yet. A natural next
+ * step is localStorage or a Supabase-backed cart.
  */
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -83,13 +84,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const removeItem = (cartItemId: string) => {
+    setItems((previous) =>
+      previous.filter((item) => item.cartItemId !== cartItemId),
+    );
+  };
+
   const totalItems = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity, 0),
     [items],
   );
 
   const value = useMemo(
-    () => ({ items, addItem, totalItems }),
+    () => ({ items, addItem, removeItem, totalItems }),
     [items, totalItems],
   );
 

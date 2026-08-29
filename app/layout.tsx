@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
 import AppShell from "@/components/layout/AppShell";
+import { CartProvider } from "@/components/menu/CartContext";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -27,7 +28,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${montserrat.variable} h-full`}>
       <body className="min-h-full bg-ivory font-sans text-ink antialiased">
-        <AppShell>{children}</AppShell>
+        <CartProvider>
+          <AppShell>{children}</AppShell>
+        </CartProvider>
       </body>
     </html>
   );

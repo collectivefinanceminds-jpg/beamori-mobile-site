@@ -51,6 +51,23 @@ export function hasRequiredSelections(
 }
 
 /**
+ * Selected option labels across every group, in group-then-option order —
+ * e.g. ["Large", "Less Sweet", "Earl Grey Milk", "Vanilla Cold Foam"], for
+ * the "Large / Less Sweet / ..." config summary shown on a Cart/Checkout line.
+ */
+export function getSelectedOptionLabels(
+  product: MenuProduct,
+  selectedOptionIdsByGroup: Record<string, string[]>,
+): string[] {
+  return (product.customisationGroups ?? []).flatMap((group) => {
+    const selectedIds = selectedOptionIdsByGroup[group.id] ?? [];
+    return group.options
+      .filter((option) => selectedIds.includes(option.id))
+      .map((option) => option.label);
+  });
+}
+
+/**
  * Add-ons for a product's page, always filled up to `limit` when the
  * catalog has enough available products. Starts with the product's own
  * curated `recommendedAddOnIds`, then backfills from other available items
@@ -99,6 +116,62 @@ export function getAddOnsForProduct(
         (candidate) => candidate.available && candidate.id !== product.id,
       ),
     );
+  }
+
+  return result.slice(0, limit);
+}
+
+/**
+ * Add-ons for Checkout, aggregated across everything already in the cart —
+ * not one product's own recommendations. Starts with the union of every
+ * cart product's recommendedAddOnIds, backfills from categories already in
+ * the cart, then any other available product — always excluding anything
+ * already in the cart itself (adding more of it belongs in the cart's own
+ * quantity stepper, not the add-ons row).
+ */
+export function getAddOnsForCart<T extends MenuProduct>(
+  cartProductIds: string[],
+  catalog: T[],
+  limit = 5,
+): T[] {
+  const cartIds = new Set(cartProductIds);
+  const cartCategories = new Set(
+    cartProductIds
+      .map((id) => catalog.find((product) => product.id === id)?.category)
+      .filter((category): category is string => Boolean(category)),
+  );
+  const explicitIds = cartProductIds.flatMap(
+    (id) =>
+      catalog.find((product) => product.id === id)?.recommendedAddOnIds ?? [],
+  );
+
+  const result: T[] = [];
+  const chosenIds = new Set<string>();
+
+  const addUntilFull = (candidates: T[]) => {
+    for (const candidate of candidates) {
+      if (result.length >= limit) return;
+      if (chosenIds.has(candidate.id) || cartIds.has(candidate.id)) continue;
+      if (!candidate.available) continue;
+      result.push(candidate);
+      chosenIds.add(candidate.id);
+    }
+  };
+
+  addUntilFull(
+    explicitIds
+      .map((id) => catalog.find((product) => product.id === id))
+      .filter((product): product is T => product !== undefined),
+  );
+
+  if (result.length < limit) {
+    addUntilFull(
+      catalog.filter((product) => cartCategories.has(product.category)),
+    );
+  }
+
+  if (result.length < limit) {
+    addUntilFull(catalog);
   }
 
   return result.slice(0, limit);
