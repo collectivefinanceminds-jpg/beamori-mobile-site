@@ -1,5 +1,45 @@
 import { MENU_PRODUCTS, type MenuCategory, type MenuProduct } from "@/data/menu";
 
+/** Default-selected option ids per group, keyed by group id — the initial state for a product page. */
+export function getDefaultSelectedOptionIds(
+  product: MenuProduct,
+): Record<string, string[]> {
+  const selections: Record<string, string[]> = {};
+  for (const group of product.customisationGroups ?? []) {
+    const defaults = group.options.filter((option) => option.default);
+    selections[group.id] = defaults.map((option) => option.id);
+  }
+  return selections;
+}
+
+/** Base price plus every selected option's price adjustment, in cents. */
+export function computeUnitPriceCents(
+  product: MenuProduct,
+  selectedOptionIdsByGroup: Record<string, string[]>,
+): number {
+  const adjustment = (product.customisationGroups ?? []).reduce(
+    (groupSum, group) => {
+      const selectedIds = selectedOptionIdsByGroup[group.id] ?? [];
+      const optionSum = group.options
+        .filter((option) => selectedIds.includes(option.id))
+        .reduce((sum, option) => sum + option.priceAdjustmentCents, 0);
+      return groupSum + optionSum;
+    },
+    0,
+  );
+  return product.priceCents + adjustment;
+}
+
+/** True once every required customisation group has at least one selection. */
+export function hasRequiredSelections(
+  product: MenuProduct,
+  selectedOptionIdsByGroup: Record<string, string[]>,
+): boolean {
+  return (product.customisationGroups ?? [])
+    .filter((group) => group.required)
+    .every((group) => (selectedOptionIdsByGroup[group.id] ?? []).length > 0);
+}
+
 // Categories pulled for the homepage "Recommend for You" carousel, in
 // display order. Edit this list to change which categories feed it.
 const RECOMMENDED_CATEGORY_ORDER = [

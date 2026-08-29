@@ -1,23 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { getProductById } from "@/data/menu";
+import { usePathname } from "next/navigation";
 import { formatSgd } from "@/lib/currency";
+import { isProductDetailRoute } from "@/lib/nav";
 import { useCart } from "./CartContext";
 import { CartIcon } from "./MenuIcons";
 
 /**
  * Fixed, column-width wrapper (same technique as BottomNav) so the pill/bar
  * aligns with the centered phone column at any viewport width, sitting
- * just above the persistent bottom nav.
+ * just above the persistent bottom nav. Hidden on product detail pages,
+ * where the sticky purchase bar already owns that space and BottomNav
+ * itself is hidden too (see AppShell).
  */
 export default function CartOverlay() {
+  const pathname = usePathname();
   const { items, totalItems } = useCart();
 
-  const totalCents = items.reduce((sum, item) => {
-    const product = getProductById(item.productId);
-    return sum + (product ? product.priceCents * item.quantity : 0);
-  }, 0);
+  if (isProductDetailRoute(pathname)) return null;
+
+  const totalCents = items.reduce(
+    (sum, item) => sum + item.unitPriceCents * item.quantity,
+    0,
+  );
 
   return (
     <div className="pointer-events-none fixed bottom-[calc(var(--spacing-navbar)+env(safe-area-inset-bottom)+0.75rem)] left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 px-gutter">

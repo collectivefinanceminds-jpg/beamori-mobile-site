@@ -4,15 +4,40 @@ export type MenuCategory = {
   sortOrder: number;
 };
 
+export type CustomisationOption = {
+  id: string;
+  label: string;
+  /** In cents, added to the base price when this option is selected. */
+  priceAdjustmentCents: number;
+  default?: boolean;
+  available: boolean;
+};
+
+export type CustomisationGroup = {
+  id: string;
+  label: string;
+  required: boolean;
+  selectionType: "single" | "multiple";
+  options: CustomisationOption[];
+};
+
 export type MenuProduct = {
   id: string;
   name: string;
   category: string;
+  /** Short blurb shown on the Menu list. */
   description?: string;
+  /** Longer copy shown on the product page — distinct from `description`. */
+  longDescription?: string;
   priceCents: number;
   compareAtPriceCents?: number;
   available: boolean;
   limitedTime?: boolean;
+  /** Common allergens this item contains — undefined/empty means "no data yet", not "none". */
+  allergens?: string[];
+  customisationGroups?: CustomisationGroup[];
+  /** Other product ids suggested as add-ons on this item's product page. */
+  recommendedAddOnIds?: string[];
 };
 
 // Cold Foam and matcha's milk choices are customisation options for a
@@ -40,70 +65,128 @@ const CHICKEN_POPPER_COMBO_PRICE_CENTS = 980;
 const BUDDY_COMBO_PRICE_CENTS = 1380;
 const CHICKEN_POPPERS_PRICE_CENTS = 480;
 
+// Shared by every drink — every drink can be ordered at a chosen sweetness,
+// no drink-specific exceptions exist yet.
+const SWEETNESS_GROUP: CustomisationGroup = {
+  id: "sweetness",
+  label: "Sweetness",
+  required: true,
+  selectionType: "single",
+  options: [
+    { id: "regular", label: "Regular", priceAdjustmentCents: 0, default: true, available: true },
+    { id: "less-sweet", label: "Less Sweet", priceAdjustmentCents: 0, available: true },
+    { id: "least-sweet", label: "Least Sweet", priceAdjustmentCents: 0, available: true },
+  ],
+};
+
+// Chicken Poppers is the only snack today, so it's the one add-on every
+// drink can suggest — not a random pick.
+const SNACK_ADD_ON_IDS = ["chicken-poppers"];
+
 export const MENU_PRODUCTS: MenuProduct[] = [
   {
     id: "regular-matcha",
     name: "Regular Matcha",
     category: "matcha",
     description: "Smooth and silky ceremonial matcha",
+    longDescription:
+      "Our house ceremonial-grade matcha, whisked smooth and silky with milk over ice. Clean, gently vegetal, and balanced — a good starting point if you're new to matcha.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
+    allergens: ["Milk"],
+    customisationGroups: [SWEETNESS_GROUP],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "strawberry-matcha",
     name: "Strawberry Matcha",
     category: "matcha",
     description: "Ceremonial matcha with real strawberry",
+    longDescription:
+      "Ceremonial-grade matcha layered with real strawberry for a naturally sweet, fruity twist on our house matcha.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
+    allergens: ["Milk"],
+    customisationGroups: [SWEETNESS_GROUP],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "mango-matcha",
     name: "Mango Matcha",
     category: "matcha",
     description: "Ceremonial matcha with sweet mango",
+    longDescription:
+      "Ceremonial-grade matcha paired with sweet mango for a bright, tropical take on our house matcha.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
+    allergens: ["Milk"],
+    customisationGroups: [SWEETNESS_GROUP],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "beamori-house-tea",
     name: "Beamori House Sweet Tea",
     category: "tea",
     description: "A house blend of Hojicha, Darjeeling and Earl Grey",
+    longDescription:
+      "Our house tea blend brings together roasted Hojicha, floral Darjeeling and fragrant Earl Grey, steeped and served sweet over ice.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
+    allergens: [],
+    customisationGroups: [SWEETNESS_GROUP],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "house-blend-teh-tarik",
     name: "Signature Teh-Tarik",
     category: "tea",
     description: "A spiced Chai and Thai Tea blend inspired by classic Teh-Tarik",
+    longDescription:
+      "A spiced Chai and Thai Tea blend pulled the classic Teh-Tarik way for a frothy top and rich, milky body.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
+    allergens: ["Milk"],
+    customisationGroups: [SWEETNESS_GROUP],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "milo-gao",
     name: "Milo Gao",
     category: "singapore-classics",
     description: "Rich, chocolatey Milo made extra thick and malty",
+    longDescription:
+      "Classic Milo Gao — rich, chocolatey and made extra thick and malty, the way it's meant to be.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
+    allergens: ["Milk"],
+    customisationGroups: [SWEETNESS_GROUP],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "kopi",
     name: "Kopi",
     category: "singapore-classics",
     description: "Traditional local coffee with condensed milk",
+    longDescription:
+      "Traditional local-style coffee, brewed strong and finished with condensed milk for that classic kopitiam sweetness.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
+    allergens: ["Milk"],
+    customisationGroups: [SWEETNESS_GROUP],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "kopi-o",
     name: "Kopi-O",
     category: "singapore-classics",
     description: "Traditional black coffee sweetened with sugar, without milk",
+    longDescription:
+      "Traditional black coffee, brewed strong and sweetened with sugar — no milk, just coffee.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
+    allergens: [],
+    customisationGroups: [SWEETNESS_GROUP],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "chicken-poppers",
@@ -111,8 +194,11 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     category: "snacks",
     description:
       "Crispy popcorn chicken seasoned with Beamori's spicy umami seasoning blend",
+    longDescription:
+      "Crispy popcorn chicken tossed in Beamori's own spicy umami seasoning blend, made with seaweed, sichuan peppercorns, citric acid, chicken powder, chilli powder, garlic and onion powder.",
     priceCents: CHICKEN_POPPERS_PRICE_CENTS,
     available: true,
+    allergens: ["Gluten", "Soy"],
   },
   {
     id: "mango-sticky-rice-matcha",
@@ -120,9 +206,14 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     category: "beamori-specials",
     description:
       "Ceremonial matcha with mango and mango sticky rice-inspired flavours",
+    longDescription:
+      "Ceremonial-grade matcha reimagined around the flavours of mango sticky rice — sweet mango and a hint of coconut alongside our house matcha.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     limitedTime: true,
+    allergens: ["Milk"],
+    customisationGroups: [SWEETNESS_GROUP],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "thai-bandung-matcha",
@@ -130,9 +221,14 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     category: "beamori-specials",
     description:
       "Ceremonial matcha with the floral sweetness of classic Thai Bandung",
+    longDescription:
+      "Ceremonial-grade matcha meets the floral sweetness of classic Thai Bandung, layered with rose syrup and creamy milk.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
     limitedTime: true,
+    allergens: ["Milk"],
+    customisationGroups: [SWEETNESS_GROUP],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "earl-grey-matcha",
@@ -140,24 +236,76 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     category: "beamori-specials",
     description:
       "Ceremonial matcha with Earl Grey-infused whole milk and Earl Grey sea salt cold foam",
+    longDescription:
+      "Ceremonial-grade matcha layered with Earl Grey-infused whole milk and finished with an Earl Grey sea salt cold foam.",
     priceCents: GENERAL_PRICE_CENTS,
     available: true,
+    allergens: ["Milk"],
+    customisationGroups: [
+      SWEETNESS_GROUP,
+      {
+        id: "milk",
+        label: "Milk",
+        required: true,
+        selectionType: "single",
+        options: [
+          { id: "regular-milk", label: "Regular Milk", priceAdjustmentCents: 0, available: true },
+          { id: "oat-milk", label: "Oat Milk", priceAdjustmentCents: 50, available: true },
+          {
+            id: "earl-grey-milk",
+            label: "Earl Grey Milk",
+            priceAdjustmentCents: 0,
+            default: true,
+            available: true,
+          },
+        ],
+      },
+      {
+        id: "cold-foam",
+        label: "Cold Foam",
+        required: true,
+        selectionType: "single",
+        options: [
+          { id: "no-foam", label: "None", priceAdjustmentCents: 0, available: true },
+          {
+            id: "earl-grey-sea-salt-foam",
+            label: "Earl Grey Sea Salt Cold Foam",
+            priceAdjustmentCents: 0,
+            default: true,
+            available: true,
+          },
+          {
+            id: "vanilla-foam",
+            label: "Vanilla Cold Foam",
+            priceAdjustmentCents: 100,
+            available: true,
+          },
+        ],
+      },
+    ],
+    recommendedAddOnIds: SNACK_ADD_ON_IDS,
   },
   {
     id: "chicken-popper-combo",
     name: "Chicken Popper Combo",
     category: "bundle-deals",
     description: "1 drink + 1 serving of Chicken Poppers",
+    longDescription:
+      "A combo built for one: your choice of drink paired with a serving of Chicken Poppers.",
     priceCents: CHICKEN_POPPER_COMBO_PRICE_CENTS,
     available: true,
+    allergens: ["Milk", "Gluten", "Soy"],
   },
   {
     id: "buddy-combo",
     name: "Buddy Combo",
     category: "bundle-deals",
     description: "2 drinks + 1 snack",
+    longDescription:
+      "A combo built for two: two drinks paired with a snack to share.",
     priceCents: BUDDY_COMBO_PRICE_CENTS,
     available: true,
+    allergens: ["Milk", "Gluten", "Soy"],
   },
 ];
 

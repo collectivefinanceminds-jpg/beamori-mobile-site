@@ -4,17 +4,46 @@ import { createContext, useContext, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 export type CartItem = {
+  cartItemId: string;
   productId: string;
   quantity: number;
+  /** Selected option ids per customisation group id — {} for an unconfigured item (e.g. an add-on). */
+  selectedOptionIdsByGroup: Record<string, string[]>;
+  /** Price for one unit at this configuration, in cents. */
+  unitPriceCents: number;
+};
+
+type AddItemInput = {
+  productId: string;
+  quantity: number;
+  selectedOptionIdsByGroup: Record<string, string[]>;
+  unitPriceCents: number;
 };
 
 type CartContextValue = {
   items: CartItem[];
-  addItem: (productId: string) => void;
+  addItem: (input: AddItemInput) => void;
   totalItems: number;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
+
+// Two configurations of the same product (e.g. different milk choices)
+// must stay separate cart lines, so identity is the product id plus its
+// selected options — not the product id alone.
+function buildCartItemId(
+  productId: string,
+  selectedOptionIdsByGroup: Record<string, string[]>,
+): string {
+  const configKey = Object.keys(selectedOptionIdsByGroup)
+    .sort()
+    .map(
+      (groupId) =>
+        `${groupId}:${[...selectedOptionIdsByGroup[groupId]].sort().join(",")}`,
+    )
+    .join("|");
+  return `${productId}::${configKey}`;
+}
 
 /**
  * In-memory only, scoped to the /menu route tree (see app/menu/layout.tsx)
@@ -24,17 +53,33 @@ const CartContext = createContext<CartContextValue | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  const addItem = (productId: string) => {
+  const addItem = ({
+    productId,
+    quantity,
+    selectedOptionIdsByGroup,
+    unitPriceCents,
+  }: AddItemInput) => {
+    const cartItemId = buildCartItemId(productId, selectedOptionIdsByGroup);
+
     setItems((previous) => {
-      const existing = previous.find((item) => item.productId === productId);
+      const existing = previous.find((item) => item.cartItemId === cartItemId);
       if (existing) {
         return previous.map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: item.quantity + 1 }
+          item.cartItemId === cartItemId
+            ? { ...item, quantity: item.quantity + quantity }
             : item,
         );
       }
-      return [...previous, { productId, quantity: 1 }];
+      return [
+        ...previous,
+        {
+          cartItemId,
+          productId,
+          quantity,
+          selectedOptionIdsByGroup,
+          unitPriceCents,
+        },
+      ];
     });
   };
 
