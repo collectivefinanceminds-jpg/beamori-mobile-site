@@ -59,7 +59,7 @@ export function hasRequiredSelections(
  */
 export function getAddOnsForProduct(
   product: MenuProduct,
-  limit = 3,
+  limit = 5,
 ): MenuProduct[] {
   const explicit = (product.recommendedAddOnIds ?? [])
     .map((id) => getProductById(id))

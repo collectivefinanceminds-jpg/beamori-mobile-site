@@ -1,16 +1,16 @@
 import Image from "next/image";
 import { formatSgd } from "@/lib/currency";
 import type { ResolvedMenuProduct } from "./types";
-import { CheckIcon } from "./MenuIcons";
 
 export default function AddOnSection({
   addOns,
-  selectedIds,
-  onToggle,
+  quantities,
+  onSelect,
 }: {
   addOns: ResolvedMenuProduct[];
-  selectedIds: string[];
-  onToggle: (addOnId: string) => void;
+  /** Cart quantity added so far per add-on id, keyed by product id. */
+  quantities: Record<string, number>;
+  onSelect: (addOnId: string) => void;
 }) {
   if (addOns.length === 0) return null;
 
@@ -19,25 +19,26 @@ export default function AddOnSection({
       <h2 className="px-gutter text-lg font-semibold text-ink">Add-ons</h2>
       <div className="px-gutter mt-2 flex gap-3 overflow-x-auto pb-1 scrollbar-none [&::-webkit-scrollbar]:hidden">
         {addOns.map((addOn) => {
-          const isSelected = selectedIds.includes(addOn.id);
+          const quantity = quantities[addOn.id] ?? 0;
+          const isSelected = quantity > 0;
           return (
             <button
               key={addOn.id}
               type="button"
-              onClick={() => onToggle(addOn.id)}
+              onClick={() => onSelect(addOn.id)}
               aria-pressed={isSelected}
               className={`relative w-28 shrink-0 overflow-hidden rounded-card border-2 bg-surface text-left ${
                 isSelected ? "border-forest" : "border-transparent"
               }`}
             >
               <span
-                className={`absolute top-1.5 right-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 ${
+                className={`absolute top-1.5 right-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 text-[0.6875rem] font-semibold ${
                   isSelected
-                    ? "border-forest bg-forest"
-                    : "border-white bg-white/80"
+                    ? "border-forest bg-forest text-white"
+                    : "border-white bg-white/80 text-transparent"
                 }`}
               >
-                {isSelected && <CheckIcon className="h-3 w-3 text-white" />}
+                {isSelected ? quantity : ""}
               </span>
 
               <div className="relative aspect-square w-full bg-ivory">

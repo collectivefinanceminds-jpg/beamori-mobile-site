@@ -7,6 +7,7 @@ import {
   hasRequiredSelections,
 } from "@/lib/menu";
 import type { ResolvedMenuProduct } from "./types";
+import AddOnCustomizeSheet from "./AddOnCustomizeSheet";
 import AddOnSection from "./AddOnSection";
 import AllergenAccordion from "./AllergenAccordion";
 import CloseButton from "./CloseButton";
@@ -29,21 +30,24 @@ export default function ProductDetail({
   const [selectedOptionIdsByGroup, setSelectedOptionIdsByGroup] = useState(
     () => getDefaultSelectedOptionIds(product),
   );
-  const [selectedAddOnIds, setSelectedAddOnIds] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
+
+  // How many of each add-on this session has added to the cart via its own
+  // customise sheet — drives the quantity badge on its tile.
+  const [addOnQuantities, setAddOnQuantities] = useState<Record<string, number>>(
+    {},
+  );
+  const [activeAddOnId, setActiveAddOnId] = useState<string | null>(null);
+  const activeAddOn = addOns.find((addOn) => addOn.id === activeAddOnId) ?? null;
 
   const unitPriceCents = computeUnitPriceCents(
     product,
     selectedOptionIdsByGroup,
   );
-  const addOnsCents = selectedAddOnIds.reduce((sum, addOnId) => {
-    const addOn = addOns.find((item) => item.id === addOnId);
-    return sum + (addOn ? addOn.priceCents : 0);
-  }, 0);
-  const totalCents = unitPriceCents * quantity + addOnsCents;
+  const totalCents = unitPriceCents * quantity;
   const compareAtTotalCents = product.compareAtPriceCents
-    ? product.compareAtPriceCents * quantity + addOnsCents
+    ? product.compareAtPriceCents * quantity
     : undefined;
 
   const canAddToCart =
@@ -65,14 +69,6 @@ export default function ProductDetail({
     });
   };
 
-  const handleAddOnToggle = (addOnId: string) => {
-    setSelectedAddOnIds((previous) =>
-      previous.includes(addOnId)
-        ? previous.filter((id) => id !== addOnId)
-        : [...previous, addOnId],
-    );
-  };
-
   const handleAddToCart = () => {
     if (!canAddToCart) return;
 
@@ -83,19 +79,29 @@ export default function ProductDetail({
       unitPriceCents,
     });
 
-    for (const addOnId of selectedAddOnIds) {
-      const addOn = addOns.find((item) => item.id === addOnId);
-      if (!addOn) continue;
-      addItem({
-        productId: addOn.id,
-        quantity: 1,
-        selectedOptionIdsByGroup: {},
-        unitPriceCents: addOn.priceCents,
-      });
-    }
-
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1500);
+  };
+
+  const handleAddOnConfirm = (input: {
+    quantity: number;
+    selectedOptionIdsByGroup: Record<string, string[]>;
+    unitPriceCents: number;
+  }) => {
+    if (!activeAddOn) return;
+
+    addItem({
+      productId: activeAddOn.id,
+      quantity: input.quantity,
+      selectedOptionIdsByGroup: input.selectedOptionIdsByGroup,
+      unitPriceCents: input.unitPriceCents,
+    });
+
+    setAddOnQuantities((previous) => ({
+      ...previous,
+      [activeAddOn.id]: (previous[activeAddOn.id] ?? 0) + input.quantity,
+    }));
+    setActiveAddOnId(null);
   };
 
   return (
@@ -142,8 +148,8 @@ export default function ProductDetail({
       <div className="mt-6">
         <AddOnSection
           addOns={addOns}
-          selectedIds={selectedAddOnIds}
-          onToggle={handleAddOnToggle}
+          quantities={addOnQuantities}
+          onSelect={setActiveAddOnId}
         />
       </div>
 
@@ -166,6 +172,14 @@ export default function ProductDetail({
         }
         ctaDisabled={!canAddToCart}
       />
+
+      {activeAddOn && (
+        <AddOnCustomizeSheet
+          addOn={activeAddOn}
+          onClose={() => setActiveAddOnId(null)}
+          onConfirm={handleAddOnConfirm}
+        />
+      )}
     </div>
   );
 }
