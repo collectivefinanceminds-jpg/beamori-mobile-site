@@ -41,6 +41,7 @@ export default function AddOnCustomizeSheet({
     () => getDefaultSelectedOptionIds(addOn),
   );
   const [quantity, setQuantity] = useState(1);
+  const [justAdded, setJustAdded] = useState(false);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -57,6 +58,17 @@ export default function AddOnCustomizeSheet({
     : undefined;
   const canConfirm =
     addOn.available && hasRequiredSelections(addOn, selectedOptionIdsByGroup);
+
+  const handleConfirm = () => {
+    if (!canConfirm || justAdded) return;
+
+    onConfirm({ quantity, selectedOptionIdsByGroup, unitPriceCents });
+
+    // Show "Added to Cart" on the button for a beat before the sheet
+    // closes, same as the parent product's own Add to Cart.
+    setJustAdded(true);
+    window.setTimeout(onClose, 1000);
+  };
 
   const handleOptionChange = (groupId: string, optionId: string) => {
     const group = (addOn.customisationGroups ?? []).find(
@@ -126,12 +138,15 @@ export default function AddOnCustomizeSheet({
           onIncrease={() => setQuantity((q) => q + 1)}
           totalCents={totalCents}
           compareAtTotalCents={compareAtTotalCents}
-          onAddToCart={() =>
-            canConfirm &&
-            onConfirm({ quantity, selectedOptionIdsByGroup, unitPriceCents })
+          onAddToCart={handleConfirm}
+          ctaLabel={
+            !addOn.available
+              ? "Sold Out"
+              : justAdded
+                ? "Added to Cart"
+                : "Add to Cart"
           }
-          ctaLabel={!addOn.available ? "Sold Out" : "Add to Cart"}
-          ctaDisabled={!canConfirm}
+          ctaDisabled={!canConfirm || justAdded}
         />
       </div>
     </>,

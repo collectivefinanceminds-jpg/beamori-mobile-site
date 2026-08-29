@@ -32,6 +32,7 @@ export default function ProductDetail({
     () => getDefaultSelectedOptionIds(product),
   );
   const [quantity, setQuantity] = useState(1);
+  const [justAdded, setJustAdded] = useState(false);
 
   // How many of each add-on this session has added to the cart via its own
   // customise sheet — drives the quantity badge on its tile.
@@ -72,7 +73,7 @@ export default function ProductDetail({
   };
 
   const handleAddToCart = () => {
-    if (!canAddToCart) return;
+    if (!canAddToCart || justAdded) return;
 
     addItem({
       productId: product.id,
@@ -81,9 +82,14 @@ export default function ProductDetail({
       unitPriceCents,
     });
 
-    // Return to wherever the customer was on the Menu (scroll position
-    // included) — same as the close button, since adding to cart is done.
-    router.back();
+    // Show "Added to Cart" on the button for a beat before leaving, so the
+    // confirmation is visible before the page closes.
+    setJustAdded(true);
+    window.setTimeout(() => {
+      // Return to wherever the customer was on the Menu (scroll position
+      // included) — same as the close button, since adding to cart is done.
+      router.back();
+    }, 1000);
   };
 
   const handleAddOnConfirm = (input: {
@@ -104,9 +110,8 @@ export default function ProductDetail({
       ...previous,
       [activeAddOn.id]: (previous[activeAddOn.id] ?? 0) + input.quantity,
     }));
-    // Adding an add-on only closes its own sheet — the parent product's
-    // page stays open, unlike the parent's own Add to Cart above.
-    setActiveAddOnId(null);
+    // Closing the sheet itself (after its own delay) is handled by
+    // AddOnCustomizeSheet — this only updates cart state.
   };
 
   return (
@@ -151,8 +156,14 @@ export default function ProductDetail({
         totalCents={totalCents}
         compareAtTotalCents={compareAtTotalCents}
         onAddToCart={handleAddToCart}
-        ctaLabel={!product.available ? "Sold Out" : "Add to Cart"}
-        ctaDisabled={!canAddToCart}
+        ctaLabel={
+          !product.available
+            ? "Sold Out"
+            : justAdded
+              ? "Added to Cart"
+              : "Add to Cart"
+        }
+        ctaDisabled={!canAddToCart || justAdded}
       />
 
       {activeAddOn && (
