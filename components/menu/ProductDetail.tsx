@@ -119,7 +119,9 @@ export default function ProductDetail({
         <ProductHero product={product} />
       </div>
 
-      <div className="px-gutter mt-4">
+      <div className="mt-4">
+        {/* Full-bleed — no px-gutter — spanning the entire site width,
+            unlike every other card on this page. */}
         <ProductCustomizationCard
           product={product}
           selectedOptionIdsByGroup={selectedOptionIdsByGroup}

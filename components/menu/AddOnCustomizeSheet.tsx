@@ -87,7 +87,7 @@ export default function AddOnCustomizeSheet({
         role="dialog"
         aria-modal="true"
         aria-label={`Customise ${addOn.name}`}
-        className="animate-sheet-in fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[85dvh] w-full max-w-[430px] flex-col overflow-y-auto rounded-t-card bg-ivory pb-40"
+        className="animate-sheet-in fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[85dvh] w-full max-w-[430px] flex-col overflow-y-auto rounded-t-card bg-ivory pb-40 scrollbar-none [&::-webkit-scrollbar]:hidden"
       >
         <div className="px-gutter flex justify-end pt-4">
           <button
@@ -104,7 +104,8 @@ export default function AddOnCustomizeSheet({
           <ProductHero product={addOn} />
         </div>
 
-        <div className="px-gutter mt-4">
+        <div className="mt-4">
+          {/* Full-bleed — no px-gutter — matching the full product page. */}
           <ProductCustomizationCard
             product={addOn}
             selectedOptionIdsByGroup={selectedOptionIdsByGroup}
