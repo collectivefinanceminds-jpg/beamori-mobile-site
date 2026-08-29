@@ -133,6 +133,14 @@ export const MENU_PRODUCTS: MenuProduct[] = [
     limitedTime: true,
   },
   {
+    id: "earl-grey-matcha",
+    name: "Earl Grey Matcha",
+    category: "beamori-specials",
+    description: "Ceremonial matcha with a fragrant Earl Grey infusion",
+    priceCents: GENERAL_PRICE_CENTS,
+    available: true,
+  },
+  {
     id: "chicken-popper-combo",
     name: "Chicken Popper Combo",
     category: "bundle-deals",
