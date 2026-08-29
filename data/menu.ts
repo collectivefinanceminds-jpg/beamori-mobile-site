@@ -19,11 +19,12 @@ export type CustomisationGroup = {
   selectionType: "single" | "multiple";
   /**
    * Order is meaningful — the first available option is auto-selected when
-   * the product page opens. Follow this hierarchy: the most common choice
-   * first, then a "None"-style opt-out option (if the group has one), then
-   * any other no-cost variants, and any option that costs extra
-   * ("requires a top-up") always last. This keeps the auto-selected
-   * default free, never a paid option.
+   * the product page opens. Follow this hierarchy: the baseline "no
+   * change" option first (e.g. Regular for Size, Normal for Sweetness),
+   * then any ascending variants in ascending order (e.g. Less Sweet then
+   * More Sweet), then a "None"-style opt-out option (if the group has
+   * one), then any option that costs extra ("additional") always last.
+   * This keeps the auto-selected default free, never a paid option.
    */
   options: CustomisationOption[];
 };
@@ -94,10 +95,10 @@ const SWEETNESS_GROUP: CustomisationGroup = {
   required: true,
   selectionType: "single",
   options: [
-    { id: "regular", label: "Regular", priceAdjustmentCents: 0, available: true },
-    { id: "no-sweet", label: "No Sweet", priceAdjustmentCents: 0, available: true },
-    { id: "more-sweet", label: "More Sweet", priceAdjustmentCents: 0, available: true },
+    { id: "normal", label: "Normal", priceAdjustmentCents: 0, available: true },
     { id: "less-sweet", label: "Less Sweet", priceAdjustmentCents: 0, available: true },
+    { id: "more-sweet", label: "More Sweet", priceAdjustmentCents: 0, available: true },
+    { id: "no-sweet", label: "No Sweet", priceAdjustmentCents: 0, available: true },
   ],
 };
 
